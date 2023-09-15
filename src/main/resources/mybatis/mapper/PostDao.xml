@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.choyoujin.DAO.PostDao">
+<!--    전체 게시글 가져오기-->
+    <select id="listDao" resultType="com.example.choyoujin.DTO.PostDto">
+        select * from post order by id desc
+    </select>
+
+<!--    게시판 번호로 게시글 가져오기-->
+    <select id="findAllByBoardId" resultType="com.example.choyoujin.DTO.PostDto">
+        select * from post p
+        left join board b on p.board_id = b.id
+        where board_id = #{boardId}
+        order by p.id desc
+    </select>
+
+<!--  권한에 따른 게시글 리스트 가져오기-->
+    <select id="findAllByRole" resultType="com.example.choyoujin.DTO.PostDto">
+        select *, b.name as boardName from post p
+        left join board b on p.board_id = b.id
+        where b.role = #{role}
+        order by p.id desc
+    </select>
+
+<!--    게시글 개인 뷰 가져오기-->
+    <select id="viewDao" resultType="com.example.choyoujin.DTO.PostDto">
+        select * from post where id = #{id}
+    </select>
+
+<!--    파일 아이디로 파일 가져오기-->
+    <select id="findFileById" resultType="com.example.choyoujin.DTO.FileDto">
+        select * from file where id = #{id}
+    </select>
+
+<!--    게시글 사진 리스트 가져오기-->
+    <select id="findAllByPostId" resultType="com.example.choyoujin.DTO.ImageDto">
+        select * from post_image where post_id = #{postId}
+    </select>
+
+<!--    게시글 파일 리스트 가져오기-->
+    <select id="findAllFilesByPostId" resultType="com.example.choyoujin.DTO.FileDto">
+        select * from file where post_id = #{postId}
+    </select>
+
+<!--    게시글 작성하기-->
+    <insert id="writeDao">
+        insert into post (writer, title, content, board_id, role)
+        values (#{writer}, #{title}, #{content}, #{boardId}, #{role})
+    </insert>
+
+<!--    파일 저장하기-->
+    <insert id="saveFile">
+        insert into file (name, path, post_id)
+        values (#{name}, #{path}, #{postId})
+    </insert>
+
+<!--    게시글 사진 저장하기-->
+    <insert id="saveImages" parameterType="com.example.choyoujin.DTO.ImageDto" useGeneratedKeys="true" keyProperty="id">
+        insert into post_image (name, type, pic_byte, post_id)
+        values (#{name}, #{type}, #{picByte}, #{postId})
+    </insert>
+
+<!--    게시글 삭제하기 - String -> Integer 타입으로 형변환 필수-->
+    <delete id="deletePostById">
+        delete from post where id = cast(#{id} as integer)
+    </delete>
+
+<!--    게시글 개수 세기-->
+    <select id="articleCount" resultType="_int">
+        select count(*) from post
+    </select>
+
+<!--    가장 최근 게시글의 아이디 가져오기-->
+    <select id="findMaxPostId" resultType="_int">
+        select max(id) from post;
+    </select>
+
+</mapper>

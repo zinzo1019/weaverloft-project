@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.choyoujin.DAO.UserDao">
+    <select id="list" resultType="com.example.choyoujin.DTO.UserDto">
+        select email, name from tb_user
+    </select>
+
+<!--    이메일로 사용자 정보 찾기-->
+    <select id="findUserByEmail" resultType="com.example.choyoujin.DTO.UserDto">
+        select * from tb_user u
+        left join image i
+        on u.image_id = i.id
+        where u.email = #{email}
+    </select>
+
+<!--    전화번호로 사용자 정보 찾기-->
+    <select id="findUserByPhone" resultType="Map">
+        select * from tb_user
+        where phone = #{phone}
+    </select>
+
+<!--    회원가입-->
+    <insert id="saveUser">
+        insert into tb_user (email, name, pw, address, birth, gender, phone, role, enabled, image_id)
+        values (#{userDto.email}, #{userDto.name}, #{userDto.pw}, #{userDto.address}, #{userDto.birth}, #{userDto.gender}, #{userDto.phone}, #{role}, #{enabled}, #{imageId})
+    </insert>
+
+<!--    사용자 정보 수정 (이미지 제외)-->
+    <update id="updateUser" parameterType="com.example.choyoujin.DTO.UserDto">
+        update tb_user
+        set name = #{name}, address = #{address}, birth = #{birth}, gender = #{gender}, phone = #{phone}
+        where email = #{email}
+    </update>
+
+<!--    사용자 이미지 수정-->
+    <update id="updateImage" parameterType="com.example.choyoujin.DTO.ImageDto">
+        update image
+        set name = #{name}, pic_byte = #{picByte}, type = #{type}
+        where id = #{id}
+    </update>
+
+<!--    비밀번호 수정-->
+    <update id="updatePw" parameterType="com.example.choyoujin.DTO.UserDto">
+        update tb_user set pw = #{pw}
+        where email = #{email}
+    </update>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.choyoujin.DAO.FileDao">
+
+<!--    아이디로 사용자 사진 찾기-->
+    <select id="findImageById" resultType="com.example.choyoujin.DTO.ImageDto">
+        select * from image where id = #{id}
+    </select>
+
+<!--    사용자 사진 저장하기-->
+    <insert id="saveImage" parameterType="com.example.choyoujin.DTO.ImageDto" useGeneratedKeys="true" keyProperty="id">
+        insert into image (name, type, pic_byte)
+        values (#{name}, #{type}, #{picByte})
+    </insert>
+
+<!--    이메일로 이미지 찾기-->
+    <select id="findIdByEmail" resultType="com.example.choyoujin.DTO.ImageDto">
+        select id from image where tb_user_email = #{email}
+    </select>
+
+</mapper>
