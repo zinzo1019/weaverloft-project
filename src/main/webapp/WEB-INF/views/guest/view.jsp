@@ -73,13 +73,68 @@
                 </form>
             </div>
         </div>
+
+<%--        댓글--%>
+        <div class="card mb-2">
+            <div class="card-header bg-light">
+                <i class="fa fa-comment fa"></i> REPLY
+            </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <form id="commentForm">
+                        <textarea class="form-control" id="comment" rows="3"></textarea>
+                        <button type="button" class="btn btn-dark mt-3" id="saveComment">post reply</button>
+                    </form>
+                </li>
+            </ul>
+            <div class="card">
+                <div class="card-header">댓글</div>
+                <ul class="list-group">
+                    <c:forEach items="${comments}" var="comment">
+<%--                        댓글 사용자--%>
+                        <div class="">
+                            <img src="data:${comment.type};base64,${comment.encoding}" style="width: 50px; height: 50px;">
+                            <div class="font-italic">${comment.name}</div>
+                        </div>
+
+                        <li class="list-group-item d-flex justify-content-between">
+                        <div>${comment.content}</div>
+                        <div class="d-flex">
+                            <button class="badge">삭제</button>
+                        </div>
+                    </li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </div>
     </div>
 </main>
-
 
 <%--    bootstrap--%>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 
 </body>
+<script>
+    $(document).ready(function () {
+        /** 댓글 작성 버튼 클릭 */
+        $("#saveComment").click(function () {
+
+            console.log("start")
+            var comment = document.getElementById("comment").value;
+
+            console.log("content is " + comment)
+
+            $.ajax({
+                type: "POST",
+                url: "/${dto.role}/comment?id=${dto.id}", // 게시글 아이디 함께 전달
+                data: {"content": comment},
+                success: function() {
+                    location.reload(); // 페이지 새로고침
+                }
+            });
+        })
+    });
+    </script>
 </html>

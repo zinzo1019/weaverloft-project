@@ -1,13 +1,21 @@
 package com.example.choyoujin.Service;
 
 import com.example.choyoujin.DAO.FileDao;
+import com.example.choyoujin.DTO.FileDto;
 import com.example.choyoujin.DTO.ImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -37,8 +45,60 @@ public class FileService {
     public ImageDto findImageById(int id) {
         return fileDao.findImageById(id);
     }
-    public int findIdByEmail(String email) {
+     int findIdByEmail(String email) {
         return fileDao.findIdByEmail(email);
+    }
+
+    /** 파일 다운로드 */
+    public void downloadFile(HttpServletResponse response, HttpServletRequest request, FileDto fileDto, File file) {
+        FileInputStream fileInputStream = null;
+        ServletOutputStream servletOutputStream = null;
+
+        try{
+            String downName = null;
+            String browser = request.getHeader("User-Agent");
+            //파일 인코딩
+            if(browser.contains("MSIE") || browser.contains("Trident") || browser.contains("Chrome")){//브라우저 확인 파일명 encode
+                downName = URLEncoder.encode(fileDto.getName(),"UTF-8").replaceAll("\\+", "%20");
+
+            }else{
+                downName = new String(fileDto.getName().getBytes("UTF-8"), "ISO-8859-1");
+            }
+
+            response.setHeader("Content-Disposition","attachment;filename=\"" + downName+"\"");
+            response.setContentType("application/octer-stream");
+            response.setHeader("Content-Transfer-Encoding", "binary;");
+
+            fileInputStream = new FileInputStream(file);
+            servletOutputStream = response.getOutputStream();
+
+            byte b [] = new byte[1024];
+            int data = 0;
+
+            while((data=(fileInputStream.read(b, 0, b.length))) != -1){
+                servletOutputStream.write(b, 0, data);
+            }
+
+            servletOutputStream.flush();//출력
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally{
+            if(servletOutputStream!=null){
+                try{
+                    servletOutputStream.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+            if(fileInputStream!=null){
+                try{
+                    fileInputStream.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /** 문자열 압축 */
@@ -61,8 +121,8 @@ public class FileService {
         return outputStream.toByteArray();
     }
 
-    /** 문자열 압축 풀기 */
-    public static byte[] decompressBytes(byte[] data) {
+    /** 문자열 압축 풀기 & 인코딩 */
+    public static String decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
@@ -75,8 +135,7 @@ public class FileService {
             outputStream.close();
         } catch (IOException | DataFormatException ignored) {
         }
-
-        return outputStream.toByteArray();
+        return Base64.getEncoder().encodeToString(outputStream.toByteArray()); // img로 띄우기 위해 인코딩
     }
 
 }

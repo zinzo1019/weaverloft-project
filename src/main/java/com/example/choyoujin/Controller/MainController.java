@@ -1,6 +1,5 @@
 package com.example.choyoujin.Controller;
 
-import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DAO.PostDao;
 import com.example.choyoujin.DTO.BoardDto;
 import com.example.choyoujin.DTO.PostDto;
@@ -9,19 +8,13 @@ import com.example.choyoujin.Service.BoardService;
 import com.example.choyoujin.Service.UserService;
 import com.example.choyoujin.Service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -42,8 +35,6 @@ public class MainController {
         getUserSession(model);
 
         List<PostDto> guestPosts = postService.findAllByRole("ROLE_GUEST");
-
-        System.out.println(guestPosts);
 
         model.addAttribute("list", guestPosts);
         model.addAttribute("board", new BoardDto());

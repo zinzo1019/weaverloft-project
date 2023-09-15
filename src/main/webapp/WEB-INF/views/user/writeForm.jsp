@@ -105,14 +105,14 @@
             var formData = new FormData($("#form")[0]);
             $.ajax({
                 type: "POST",
-                url: "write?id=${id}",
+                url: "/${role}/write?id=${id}",
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function (response) {
                     // 업로드 성공 시 처리
-                    alert("게시글이 저장되었습니다.");
-                    window.location.href = "board?id=${id}"; // 리다이렉션
+                    alert(response.message);
+                    window.location.href = "/${role}/board?id=${id}"; // 리다이렉션
                 },
                 error: function (error) {
                     // 업로드 실패 시 처리

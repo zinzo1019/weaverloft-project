@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.choyoujin.DAO.CommentDao">
+
+<!--    게시글 번호로 댓글 리스트 가져오기-->
+    <select id="findAllByPostId" resultType="com.example.choyoujin.DTO.CommentDto">
+        select * from comment c
+        left join tb_user u
+        on c.tb_user_id = u.email
+        left join image i
+        on u.image_id = i.id
+        where c.post_id = #{postId}
+    </select>
+
+<!--    댓글 번호로 댓글 정보 가져오기-->
+    <select id="findById" resultType="com.example.choyoujin.DTO.CommentDto">
+        select * from comment
+        where id = #{id}
+    </select>
+
+<!--    댓글 저장하기-->
+    <insert id="saveComment" parameterType="com.example.choyoujin.DTO.CommentDto">
+        insert into comment (content, tb_user_id, post_id)
+        values (#{content}, #{email}, #{postId})
+    </insert>
+
+</mapper>

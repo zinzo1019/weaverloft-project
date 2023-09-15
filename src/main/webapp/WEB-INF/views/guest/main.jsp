@@ -44,9 +44,6 @@
 
     var alertMessage = "${alertMessage}"; // alert 메시지
     var redirectUrl = "${redirectUrl}"; // 리디렉션할 URL
-
-    console.log(alertMessage)
-
     if (alertMessage) { // 권한이 없다면
         alert(alertMessage); // alert 창 표시
         window.location.href = redirectUrl; // 리디렉션

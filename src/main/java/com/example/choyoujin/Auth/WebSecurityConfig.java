@@ -36,7 +36,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                .antMatchers("/guest").permitAll() // 회원가입 페이지는 모두 접근 허용
                 .antMatchers("/guest/**").permitAll() // guest -> 모두 접근 허용
                 .antMatchers("/member/**").hasAnyRole("USER", "ADMIN") // member -> 사용자만 접근 허용
                 .antMatchers("/admin/**").hasRole("ADMIN") // admin -> 관리자만 접근 허용

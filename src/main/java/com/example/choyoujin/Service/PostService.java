@@ -55,9 +55,7 @@ public class PostService {
         List<ImageDto> imageDtos = new ArrayList<>();
 
         for (ImageDto imageDto : images) {
-            imageDto.setPicByte(decompressBytes(imageDto.getPicByte())); // 이미지 압축 풀기
-            String encoding = Base64.getEncoder().encodeToString(imageDto.getPicByte()); // img로 띄우기 위해 인코딩
-            imageDto.setEncoding(encoding);
+            imageDto.setEncoding(decompressBytes(imageDto.getPicByte())); // 이미지 압축 풀기
             imageDtos.add(imageDto);
         }
         return imageDtos;

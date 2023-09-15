@@ -38,8 +38,7 @@ public class UserController {
         String email = ((UserDetails) principal).getUsername();
 
         UserDto userDto = userService.findUserByEmail(email); // 이메일로 사용자 찾기
-        userDto.setPicByte(decompressBytes(userDto.getPicByte())); // 이미지 압축 풀기
-        String encoding = Base64.getEncoder().encodeToString(userDto.getPicByte()); // img로 띄우기 위해 인코딩
+        String encoding = decompressBytes(userDto.getPicByte()); // 이미지 압축 풀기
         model.addAttribute("userDto", userDto);
         model.addAttribute("encoding", encoding);
         return "user/myPage";
