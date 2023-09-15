@@ -48,9 +48,9 @@ public class PostController {
         List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디를 토대로 파일 리스트 가져오기
         List<CommentDto> commentDtos = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
 
-        model.addAttribute("images", imageDtos); // model에 추가
-        model.addAttribute("files", fileDtos); // file에 추가
-        model.addAttribute("comments", commentDtos);
+        model.addAttribute("images", imageDtos); // 이미지 리스트 추가
+        model.addAttribute("files", fileDtos); // 파일 리스트 추가
+        model.addAttribute("comments", commentDtos); // 댓글 리스트 추가
         return "guest/view";
     }
 
@@ -75,7 +75,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 작성 저장
+     * 게시글 저장
      */
     @RequestMapping("/{role}/write")
     public ResponseEntity<ApiResponse> write(@PathVariable("role") String role, @RequestParam("id") int id, PostDto postDto) throws IOException {

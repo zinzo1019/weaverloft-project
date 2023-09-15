@@ -18,7 +18,6 @@ public class CommentService {
     /** 댓글 저장하기 */
     public void saveComment(CommentDto commentDto) {
         commentDao.saveComment(commentDto);
-        System.out.println("댓글을 저장했습니다.");
     }
 
     /** 게시글 아이디로 댓글 리스트 가져오기 */

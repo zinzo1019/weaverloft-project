@@ -63,34 +63,43 @@ public class PostService {
 
     /** 게시글 아이디로 이미지 리스트 저장하기 */
     public void saveImagesByPostId(PostDto postDto, int postId) throws IOException {
-        // 다중 이미지 업로드
-        for (MultipartFile image : postDto.getImages()) {
-            String name = image.getOriginalFilename(); // 파일 이름
-            String type = image.getContentType(); // 파일 타입
-            byte[] picByte = compressBytes(image.getBytes()); // 문자열 압축
+        List<MultipartFile> imgList = postDto.getImages();
+        if (!imgList.get(0).getOriginalFilename().equals("")) { // 이미지가 들어와야 아래 로직 수행
+            // 다중 이미지 업로드
+            for (MultipartFile image : postDto.getImages()) {
+                String name = image.getOriginalFilename(); // 파일 이름
+                String type = image.getContentType(); // 파일 타입
+                byte[] picByte = compressBytes(image.getBytes()); // 문자열 압축
 
-            ImageDto imageDto = new ImageDto(name, type, picByte, postId); // ImageDto 생성
-            saveImages(imageDto);
+                ImageDto imageDto = new ImageDto(name, type, picByte, postId); // ImageDto 생성
+                saveImages(imageDto);
+            }
         }
     }
 
     /** 게시글 아이디로 파일 리스트 저장하기 */
     public void saveFilesByPostId(PostDto postDto, int postId) throws IOException {
-        List<String> fileNames = new ArrayList<>();
-        for (MultipartFile file : postDto.getFiles()) {
-            String uploadDir = "C:/weaver_test/"; // 파일 경로
-            String fileName = file.getOriginalFilename(); // 파일 이름
-            String filePath = uploadDir + fileName; // 파일 경로 + 파일 이름
+        List<MultipartFile> fileList = postDto.getFiles();
+        if (!fileList.get(0).getOriginalFilename().equals("")) { // 파일이 들어와야 아래 로직 수행
 
-            // 파일 저장
-            File dest = new File(filePath);
-            file.transferTo(dest);
-            fileNames.add(fileName);
+            List<String> fileNames = new ArrayList<>();
+            for (MultipartFile file : postDto.getFiles()) {
+                String uploadDir = "C:/weaver_test/"; // 파일 경로
+                String fileName = file.getOriginalFilename(); // 파일 이름
+                String filePath = uploadDir + fileName; // 파일 경로 + 파일 이름
 
-            // 파일 경로를 DB에 저장
-            FileDto fileDto = new FileDto();
-            fileDto.setPath(filePath); fileDto.setPostId(postId); fileDto.setName(fileName);
-            postDao.saveFile(fileDto);
+                // 파일 저장
+                File dest = new File(filePath);
+                file.transferTo(dest);
+                fileNames.add(fileName);
+
+                // 파일 경로를 DB에 저장
+                FileDto fileDto = new FileDto();
+                fileDto.setPath(filePath);
+                fileDto.setPostId(postId);
+                fileDto.setName(fileName);
+                postDao.saveFile(fileDto);
+            }
         }
     }
 
