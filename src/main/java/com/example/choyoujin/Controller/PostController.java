@@ -49,17 +49,11 @@ public class PostController {
 
         List<ImageDto> imageDtos = postService.getImageDtos(postId); // 게시글 아이디로 이미지 리스트 가져오기
         List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디로 파일 리스트 가져오기
-//        List<CommentDto> commentDtos = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
-
-
         List<CommentDto> allComments = commentService.getAllComments(postId); // 댓글 리스트 가져오기
-        model.addAttribute("comments", allComments);
-
-
 
         model.addAttribute("images", imageDtos); // 이미지 리스트 추가
         model.addAttribute("files", fileDtos); // 파일 리스트 추가
-//        model.addAttribute("comments", commentDtos); // 댓글 리스트 추가
+        model.addAttribute("comments", allComments); // 댓글 리스트 추가
         return "guest/view";
     }
 
