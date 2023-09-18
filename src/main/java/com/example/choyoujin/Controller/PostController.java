@@ -10,6 +10,7 @@ import com.example.choyoujin.DTO.PostDto;
 import com.example.choyoujin.Service.CommentService;
 import com.example.choyoujin.Service.FileService;
 import com.example.choyoujin.Service.PostService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 @Controller
 public class PostController {
@@ -44,14 +47,28 @@ public class PostController {
         int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
         model.addAttribute("dto", postDao.viewDao(postId)); // 게시글 정보
 
-        List<ImageDto> imageDtos = postService.getImageDtos(postId); // 게시글 아이디를 토대로 이미지 리스트 가져오기
-        List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디를 토대로 파일 리스트 가져오기
-        List<CommentDto> commentDtos = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
+        List<ImageDto> imageDtos = postService.getImageDtos(postId); // 게시글 아이디로 이미지 리스트 가져오기
+        List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디로 파일 리스트 가져오기
+//        List<CommentDto> commentDtos = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
+
+
+        List<CommentDto> allComments = commentService.getAllComments(postId); // 댓글 리스트 가져오기
+        model.addAttribute("comments", allComments);
+
+
 
         model.addAttribute("images", imageDtos); // 이미지 리스트 추가
         model.addAttribute("files", fileDtos); // 파일 리스트 추가
-        model.addAttribute("comments", commentDtos); // 댓글 리스트 추가
+//        model.addAttribute("comments", commentDtos); // 댓글 리스트 추가
         return "guest/view";
+    }
+
+    /** 전체 댓글 가져오기 */
+    @GetMapping("/{role}/reply")
+    public void getReplys(HttpServletRequest request, Model model) {
+        int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
+        List<CommentDto> allComments = commentService.getAllComments(postId); // 대댓글 리스트
+        model.addAttribute("comments", allComments);
     }
 
     /** 게시글 댓글 작성하기 */
@@ -61,6 +78,16 @@ public class PostController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
         commentDto.setPostId(postId); commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅
         commentService.saveComment(commentDto); // 댓글 저장
+        return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
+    }
+
+    /** 게시글 대댓글 작성하기 */
+    @PostMapping("/{role}/reply")
+    public ResponseEntity<ApiResponse> saveReplys(CommentDto commentDto, HttpServletRequest request) {
+        int replyId = Integer.parseInt(request.getParameter("id")); // 댓글 아이디
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
+        commentDto.setCommentId(replyId); commentDto.setEmail(email); // 사용자 아이디 & 댓글 아이디 세팅
+        commentService.saveReply(commentDto); // 대댓글 저장
         return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
     }
 

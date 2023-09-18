@@ -16,8 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
 
 import static com.example.choyoujin.Service.FileService.decompressBytes;
 
@@ -38,6 +36,9 @@ public class UserController {
         String email = ((UserDetails) principal).getUsername();
 
         UserDto userDto = userService.findUserByEmail(email); // 이메일로 사용자 찾기
+
+        System.out.println(userDto);
+
         String encoding = decompressBytes(userDto.getPicByte()); // 이미지 압축 풀기
         model.addAttribute("userDto", userDto);
         model.addAttribute("encoding", encoding);

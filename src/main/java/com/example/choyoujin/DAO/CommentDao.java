@@ -9,5 +9,9 @@ import java.util.List;
 public interface CommentDao {
     void saveComment(CommentDto commentDto); // 댓글 저장하기
 
-    List<CommentDto> findAllByPostId(int postId);
+    List<CommentDto> findAllByPostId(int postId); // 게시글 번호로 댓글 리스트 가져오기
+
+    void saveReply(CommentDto commentDto); // 대댓글 저장하기
+
+    List<CommentDto> findAllByCommentId(int commentId); // 댓글 번호로 대댓글 리스트 가져오기
 }

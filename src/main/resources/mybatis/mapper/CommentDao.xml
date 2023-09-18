@@ -13,6 +13,17 @@
         left join image i
         on u.image_id = i.id
         where c.post_id = #{postId}
+        AND c.comment_id IS NULL
+    </select>
+
+<!--    댓글 번호로 대댓글 리스트 가져오기-->
+    <select id="findAllByCommentId" resultType="com.example.choyoujin.DTO.CommentDto">
+        select * from comment c
+        left join tb_user u
+        on c.tb_user_id = u.email
+        left join image i
+        on u.image_id = i.id
+        where c.comment_id = #{commentId}
     </select>
 
 <!--    댓글 번호로 댓글 정보 가져오기-->
@@ -25,6 +36,12 @@
     <insert id="saveComment" parameterType="com.example.choyoujin.DTO.CommentDto">
         insert into comment (content, tb_user_id, post_id)
         values (#{content}, #{email}, #{postId})
+    </insert>
+
+<!--    대댓글 저장하기-->
+    <insert id="saveReply" parameterType="com.example.choyoujin.DTO.CommentDto">
+        insert into comment (content, tb_user_id, comment_id)
+        values (#{content}, #{email}, #{commentId})
     </insert>
 
 </mapper>

@@ -123,6 +123,9 @@ public class FileService {
 
     /** 문자열 압축 풀기 & 인코딩 */
     public static String decompressBytes(byte[] data) {
+
+        System.out.println(data);
+
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);

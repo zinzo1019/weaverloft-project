@@ -13,6 +13,12 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
+<style>
+    .comment {
+        margin-left: 10px; /* 들여쓰기 크기 조절 */
+    }
+</style>
+
 <body>
 <main class="mt-5 pt-5">
     <div class="container-fluid px-4">
@@ -102,13 +108,13 @@
                     <c:forEach items="${comments}" var="comment">
 <%--                        댓글 사용자--%>
                         <div class="">
-                            <img src="data:${comment.type};base64,${comment.encoding}" style="width: 50px; height: 50px;">
+<%--                            <img src="data:${comment.type};base64,${comment.encoding}" style="width: 50px; height: 50px;">--%>
                             <div class="font-italic">${comment.name}</div>
                         </div>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>${comment.content}</div>
                             <div class="d-flex">
-                                <button class="showReplyForm btn btn-dark ml-2" >대댓글 작성</button>
+                                <button class="showReplyForm btn btn-dark ml-2">대댓글 작성</button>
                             </div>
                             <div class="d-flex">
                                 <button class="btn btn-dark ml-2">삭제</button>
@@ -116,7 +122,8 @@
                         </li>
                         <form class="replyForm" style="display: none;"><br>
                             <textarea class="replyText form-control" id="replyContent" name="replyContent" placeholder="댓글 내용" style="background-color: #f2f2f2;"></textarea><br>
-                            <button type="button" class="replyButton btn btn-dark">댓글 작성</button><br><br><br>
+<%--                            script에서 ${comment.id} 값을 쓰기 위해 data-comment-id값 설정--%>
+                            <button type="button" class="replyButton btn btn-dark" data-comment-id="${comment.id}">댓글 작성</button><br><br><br>
                         </form>
                     </c:forEach>
                 </ul>
@@ -168,18 +175,18 @@
     /** 대댓글 저장 버튼 클릭 시 */
     replyButtons.forEach(function (button, index) {
         button.addEventListener('click', function () {
-            replyButton(index);
+            var reply = replyTexts[index].value; // 인덱스에 맞는 대댓글 내용 가져오기
+            var commentId = this.getAttribute('data-comment-id'); // 댓글 아이디 가져오기
+            $.ajax({
+                type: "POST",
+                url: "/${dto.role}/reply?id=" + commentId, // 댓글 아이디 함께 전달
+                data: {"content": reply},
+                success: function() {
+                    location.reload(); // 페이지 새로고침
+                }
+            });
         });
     });
-
-    function replyButton(index) {
-        var textarea = replyTexts[index].value; // 인덱스에 맞는 대댓글 내용을 가져옴
-        console.log("reply is " + textarea);
-
-        /** 대댓글을 저장하는 로직 필요 */
-
-
-    }
 
 
 </script>
