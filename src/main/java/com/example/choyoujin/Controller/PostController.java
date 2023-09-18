@@ -2,6 +2,7 @@ package com.example.choyoujin.Controller;
 
 import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.choyoujin.ApiResponse;
+import com.example.choyoujin.DAO.CommentDao;
 import com.example.choyoujin.DAO.PostDao;
 import com.example.choyoujin.DTO.CommentDto;
 import com.example.choyoujin.DTO.FileDto;
@@ -38,6 +39,8 @@ public class PostController {
     private CommentService commentService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private CommentDao commentDao;
 
     /**
      * 게시글 개인 뷰
@@ -49,20 +52,18 @@ public class PostController {
 
         List<ImageDto> imageDtos = postService.getImageDtos(postId); // 게시글 아이디로 이미지 리스트 가져오기
         List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디로 파일 리스트 가져오기
-        List<CommentDto> allComments = commentService.getAllComments(postId); // 댓글 리스트 가져오기
+//        List<CommentDto> allComments = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
+
+        List<CommentDto> allComments = commentDao.selectReplies(postId);
+        System.out.println(allComments);
 
         model.addAttribute("images", imageDtos); // 이미지 리스트 추가
         model.addAttribute("files", fileDtos); // 파일 리스트 추가
         model.addAttribute("comments", allComments); // 댓글 리스트 추가
-        return "guest/view";
-    }
 
-    /** 전체 댓글 가져오기 */
-    @GetMapping("/{role}/reply")
-    public void getReplys(HttpServletRequest request, Model model) {
-        int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
-        List<CommentDto> allComments = commentService.getAllComments(postId); // 대댓글 리스트
-        model.addAttribute("comments", allComments);
+        System.out.println(allComments);
+
+        return "guest/view";
     }
 
     /** 게시글 댓글 작성하기 */
@@ -79,6 +80,10 @@ public class PostController {
     @PostMapping("/{role}/reply")
     public ResponseEntity<ApiResponse> saveReplys(CommentDto commentDto, HttpServletRequest request) {
         int replyId = Integer.parseInt(request.getParameter("id")); // 댓글 아이디
+
+        System.out.println("replyId is " + replyId);
+        System.out.println("commentDto.content is " + commentDto.getContent());
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
         commentDto.setCommentId(replyId); commentDto.setEmail(email); // 사용자 아이디 & 댓글 아이디 세팅
         commentService.saveReply(commentDto); // 대댓글 저장

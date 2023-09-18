@@ -1,4 +1,3 @@
-<%@ page import="com.example.choyoujin.DTO.UserDto" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
@@ -14,9 +13,6 @@
 </head>
 
 <style>
-    .comment {
-        margin-left: 10px; /* 들여쓰기 크기 조절 */
-    }
 </style>
 
 <body>
@@ -97,6 +93,7 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
+<%--                    게시글에 댓글 달기--%>
                     <form id="commentForm">
                         <textarea class="form-control" id="comment" rows="3"></textarea>
                         <button type="button" class="btn btn-dark mt-3" id="saveComment">댓글 달기</button><br><br><br>
@@ -105,26 +102,90 @@
             </ul>
             <div class="card">
                 <ul class="list-group">
-                    <c:forEach items="${comments}" var="comment">
-<%--                        댓글 사용자--%>
-                        <div class="">
-<%--                            <img src="data:${comment.type};base64,${comment.encoding}" style="width: 50px; height: 50px;">--%>
-                            <div class="font-italic">${comment.name}</div>
-                        </div>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>${comment.content}</div>
-                            <div class="d-flex">
-                                <button class="showReplyForm btn btn-dark ml-2">대댓글 작성</button>
+<%--                    게시글의 댓글 리스트--%>
+                    <c:forEach items="${comments}" var="comment" begin="1" end="5" varStatus="loop">
+                        <li class="list-group-item">
+                            <div class="media">
+                                <img src="data:${comment.type};base64,${comment.encoding}" class="mr-3" alt="User Image" style="width: 50px; height: 50px;">
+                                <div class="media-body">
+                                    <div class="justify-content-between">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h5 class="mt-0">${comment.name}</h5>
+                                                    ${comment.content}
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <button class="showReplyForm btn btn-outline-dark mr-2">대댓글 작성</button>
+                                                <button class="btn btn-outline-danger">삭제</button>
+                                            </div>
+                                        </div>
+                                        <form class="replyForm" style="display: none; padding-left: 30px"><br>
+                                            <textarea class="replyText form-control" placeholder="댓글 내용" style="background-color: #f2f2f2;"></textarea><br>
+                                            <button type="button" class="replyButton btn btn-dark" data-comment-id="${comment.id}">댓글 작성</button><br><br>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex">
-                                <button class="btn btn-dark ml-2">삭제</button>
-                            </div>
-                        </li>
-                        <form class="replyForm" style="display: none;"><br>
-                            <textarea class="replyText form-control" id="replyContent" name="replyContent" placeholder="댓글 내용" style="background-color: #f2f2f2;"></textarea><br>
-<%--                            script에서 ${comment.id} 값을 쓰기 위해 data-comment-id값 설정--%>
-                            <button type="button" class="replyButton btn btn-dark" data-comment-id="${comment.id}">댓글 작성</button><br><br><br>
-                        </form>
+
+
+<%--&lt;%&ndash;                            댓글의 댓글 리스트&ndash;%&gt;--%>
+<%--                            <ul class="list-group mt-3">--%>
+<%--                                <c:if test="${not empty comment.replies}">--%>
+<%--                                <c:forEach items="${comment.replies}" var="reply">--%>
+<%--                                        <li class="list-group-item" style="padding-left: 30px;">--%>
+<%--                                            <div class="media">--%>
+<%--                                                <img src="data:${reply.type};base64,${reply.encoding}" class="mr-2" alt="User Image" style="width: 30px; height: 30px;">--%>
+<%--                                                <div class="media-body">--%>
+<%--                                                    <div class="d-flex justify-content-between align-items-center">--%>
+<%--                                                        <div>--%>
+<%--                                                            <h5 class="mt-0">${reply.name}</h5>--%>
+<%--                                                                ${reply.content}--%>
+<%--                                                        </div>--%>
+<%--                                                        <div class="d-flex align-items-center">--%>
+<%--                                                            <button class="showReplyForm btn btn-outline-dark mr-2">대댓글 작성</button>--%>
+<%--                                                            <button class="btn btn-outline-danger">삭제</button>--%>
+<%--                                                        </div>--%>
+<%--                                                    </div>--%>
+<%--                                                </div>--%>
+<%--                                            </div>--%>
+<%--                                        </li>--%>
+<%--                                        <form class="replyForm" style="display: none; padding-left: 30px"><br>--%>
+<%--                                            <textarea class="replyText form-control" id="replyContent" placeholder="댓글 내용" style="background-color: #f2f2f2;"></textarea><br>--%>
+<%--                                            <button type="button" class="replyButton btn btn-dark" data-comment-id="${reply.id}">댓글 작성</button><br><br>--%>
+<%--                                        </form>--%>
+<%--                                    <ul class="list-group mt-3">--%>
+<%--                                        <c:if test="${not empty reply.replies}">--%>
+<%--                                            <c:forEach items="${reply.replies}" var="reply">--%>
+<%--                                                <li class="list-group-item" style="padding-left: 60px;">--%>
+<%--                                                    <div class="media">--%>
+<%--                                                        <img src="data:${reply.type};base64,${reply.encoding}" class="mr-2" alt="User Image" style="width: 30px; height: 30px;">--%>
+<%--                                                        <div class="media-body">--%>
+<%--                                                            <div class="d-flex justify-content-between align-items-center">--%>
+<%--                                                                <div>--%>
+<%--                                                                    <h5 class="mt-0">${reply.name}</h5>--%>
+<%--                                                                        ${reply.content}--%>
+<%--                                                                </div>--%>
+<%--                                                                <div class="d-flex align-items-center">--%>
+<%--                                                                    <button class="showReplyForm btn btn-outline-dark mr-2">대댓글 작성</button>--%>
+<%--                                                                    <button class="btn btn-outline-danger">삭제</button>--%>
+<%--                                                                </div>--%>
+<%--                                                            </div>--%>
+<%--                                                        </div>--%>
+<%--                                                    </div>--%>
+<%--                                                </li>--%>
+<%--                                                <form class="replyForm" style="display: none; padding-left: 60px"><br>--%>
+<%--                                                    <textarea class="replyText form-control" placeholder="댓글 내용" style="background-color: #f2f2f2;"></textarea><br>--%>
+<%--                                                    <button type="button" class="replyButton btn btn-dark" data-comment-id="${reply.id}">댓글 작성</button><br><br>--%>
+<%--                                                </form>--%>
+<%--                                            </c:forEach>--%>
+<%--                                        </c:if>--%>
+<%--                                    </ul>--%>
+<%--                                </c:forEach>--%>
+<%--                                </c:if>--%>
+<%--                            </ul>--%>
+<%--                        </li>--%>
+
+
                     </c:forEach>
                 </ul>
             </div>
@@ -177,6 +238,7 @@
         button.addEventListener('click', function () {
             var reply = replyTexts[index].value; // 인덱스에 맞는 대댓글 내용 가져오기
             var commentId = this.getAttribute('data-comment-id'); // 댓글 아이디 가져오기
+
             $.ajax({
                 type: "POST",
                 url: "/${dto.role}/reply?id=" + commentId, // 댓글 아이디 함께 전달
@@ -187,7 +249,6 @@
             });
         });
     });
-
 
 </script>
 </html>
