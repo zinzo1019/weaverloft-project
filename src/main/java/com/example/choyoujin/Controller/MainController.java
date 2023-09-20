@@ -1,75 +1,78 @@
 package com.example.choyoujin.Controller;
 
-import com.example.choyoujin.DAO.PostDao;
-import com.example.choyoujin.DTO.BoardDto;
-import com.example.choyoujin.DTO.PostDto;
-import com.example.choyoujin.DTO.UserDto;
+import com.example.choyoujin.DTO.*;
 import com.example.choyoujin.Service.BoardService;
+import com.example.choyoujin.Service.PostServiceImpl;
 import com.example.choyoujin.Service.UserService;
-import com.example.choyoujin.Service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MainController {
     @Autowired
-    PostDao PostDao;
-    @Autowired
-    PostService postService;
+    PostServiceImpl postService;
     @Autowired
     UserService userService;
     @Autowired
     BoardService boardService;
 
-    /** 메인 페이지 (게시판 선택 전) */
-    @RequestMapping({"/", "/main", "/board/main"})
-    public String root(Model model) {
+    /**
+     * 메인 페이지
+     */
+    @RequestMapping({"/", "/main", "/{role}"})
+    public String root(@RequestParam(name = "id", required = false) Integer id,
+                       @RequestParam(defaultValue = "1") int page,
+                       Model model) throws Exception {
+
         boardService.getAllBoardList(model); // 모델에 게시판 리스트 담기
-        getUserSession(model);
+        getUserSession(model); // 모델에 사용자 리스트 담기
 
-        List<PostDto> guestPosts = postService.findAllByRole("ROLE_GUEST");
+        Pagination pagination = getPagination();
+        Page<PostDto> list = null;
 
-        model.addAttribute("list", guestPosts);
-        model.addAttribute("board", new BoardDto());
-        return "guest/main";
-    }
-
-    /** 접근 제한 페이지 */
-    @RequestMapping("/roleError")
-    public String roleError(Model model) {
-        // 사용자 역할이 없는 경우, alert 메시지를 설정하고 "alert" 페이지로 이동
-        String alertMessage = "접근이 제한됐습니다.";
-        String redirectUrl = "/main"; // 리디렉션할 URL
-
-        // alert 메시지를 JavaScript 변수로 전달
-        model.addAttribute("alertMessage", alertMessage);
-        // 리디렉션 URL을 JavaScript 변수로 전달
-        model.addAttribute("redirectUrl", redirectUrl);
-
-        return "roleError";
-    }
-
-    /** 메인 페이지 (게시판 선택 후) */
-    @GetMapping("/{role}/board")
-    public String guestBoardPage(@RequestParam("id") int id, Model model) {
-        boardService.getAllBoardList(model); // 모델에 게시판 리스트 담기
-        getUserSession(model); model.addAttribute("id", id);
-
-         // 게시판 번호로 게시글 리스트 가져오기
-        List<PostDto> list = postService.findAllByBoardId(id);
-        // 게시판 번호로 게시판 정보 가져오기
-        BoardDto boardDto = boardService.findById(id);
-
+        if (id == null || id == 0) { // 게시판 선택하기 전 (최근 게시물)
+            model.addAttribute("id", 0);
+            list = postService.findAllByRole("ROLE_GUEST", page, 5);
+            pagination.setTotalCount(postService.countByRole("ROLE_GUEST"));
+            model.addAttribute("board", new BoardDto());
+        } else { // 게시판 선택 후
+            model.addAttribute("id", id);
+            list = postService.findAllByBoardId(id, page, 5);
+            pagination.setTotalCount(postService.countByBoardId(id));
+            model.addAttribute("board", boardService.findById(id));
+        }
+        model.addAttribute("pagination", pagination);
         model.addAttribute("list", list);
-        model.addAttribute("board", boardDto);
+
         return "guest/main";
+    }
+
+    /** 게시글 검색 */
+    @PostMapping("/search")
+    public String root(@RequestParam(name = "id", required = false) Integer id, // 게시판 아이디
+                       @RequestParam(defaultValue = "1") int page, Model model, String keyword) throws Exception {
+        getUserSession(model); // 모델에 사용자 리스트 담기
+        Pagination pagination = getPagination(); // 페이징 처리
+        String role = "ROLE_GUEST"; role = getUserRole(role); // 사용자 권한 받아오기 (없으면 ROLE_GUEST)
+
+        if (id == 0) { // 게시판 선택 전 (최근 게시글)
+            pagination.setTotalCount(postService.countByKeywordByGuest(keyword));
+            Page<PostDto> list = postService.searchPosts(keyword, page, 5); // 최근 게시글 중 검색하기
+            model.addAttribute("list", list); // 검색된 게시글 리스트
+        } else { // 게시판 선택 후
+            pagination.setTotalCount(postService.countByKeywordByBoardId(id, keyword));
+            Page<PostDto> list = postService.searchPosts(id, keyword, page, 5); // 최근 게시글 중 검색하기
+            model.addAttribute("list", list); // 검색된 게시글 리스트
+        }
+        model.addAttribute("board", new BoardDto("검색된 게시글"));
+        model.addAttribute("pagination", pagination); // 페이징 처리
+        model.addAttribute("role", role); // 권한 부여
+        return "guest/searchResult";
     }
 
     private void getUserSession(Model model) {
@@ -80,6 +83,23 @@ public class MainController {
             UserDto userDto = userService.findUserByEmail(email);
             model.addAttribute("user", userDto);
         }
+    }
+
+    /** 사용자 권한 받아오기 */
+    private String getUserRole(String role) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails) principal).getUsername();
+            role = userService.findUserByEmail(email).getRole();
+        }
+        return role;
+    }
+
+    /** Pagination 생성 */
+    private static Pagination getPagination() {
+        Pagination pagination = new Pagination();
+        pagination.setPageRequest(new PageRequest());
+        return pagination;
     }
 
 }

@@ -42,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/ROLE_GUEST/**").permitAll() // guest 게시판 -> 모두 접근 허용
                 .antMatchers("/ROLE_USER/**").hasAnyRole("USER", "ADMIN") // user 게시판 -> 사용자만 접근 허용
                 .antMatchers("/ROLE_ADMIN/**").hasRole("ADMIN") // admin 게시판 -> 관리자만 접근 허용
+                .antMatchers("/search").permitAll() // admin 게시판 -> 관리자만 접근 허용
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

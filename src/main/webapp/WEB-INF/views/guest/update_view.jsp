@@ -23,7 +23,7 @@
         <h1 class="mt-4">Board</h1>
         <div class="card mb-4">
             <div class="card-body">
-                <form method="post">
+                <form name="form" id="form" role="form" enctype="multipart/form-data">
                     <div class="mb-3 mt-3">
                         <label for="bno" class="form-label">bno</label>
                         <input type="text" class="form-control" id="bno" name="bno" value="${dto.id}" disabled>
@@ -31,8 +31,21 @@
                     <div class="mb-3">
                         <label for="title" class="form-label">title</label>
                         <input type="text" class="form-control" id="title" name="title"
-                               value="${dto.title}" disabled>
+                               value="${dto.title}">
                     </div>
+                    <form name="form" id="form" role="form" enctype="multipart/form-data">
+                        <!-- 다중 이미지 업로드 필드 -->
+                        <div class="mb-3">
+                            <label for="images">이미지 업로드</label>
+                            <input type="file" class="form-control" name="images" id="images" multiple accept="image/*">
+                        </div>
+
+                        <!-- 다중 파일 업로드 필드 -->
+                        <div class="mb-3">
+                            <label for="files">파일 업로드</label>
+                            <input type="file" class="form-control" name="files" id="files" multiple>
+                        </div>
+                    </form>
 
                     <%--                    다중 이미지--%>
                     <c:choose>
@@ -42,6 +55,7 @@
                                 <c:forEach items="${images}" var="image">
                                     <div class="col-md-9 col-lg-6 col-xl-5">
                                         <img src="data:${image.type};base64,${image.encoding}" class="img-fluid">
+                                        <a href="javascript:void(0);" class="delete-image" data-image-id="${image.id}">삭제</a>
                                     </div>
                                 </c:forEach>
                             </div>
@@ -58,6 +72,7 @@
                                         <th>ID</th>
                                         <th>파일 이름</th>
                                         <th>다운로드</th>
+                                        <th>삭제</th>
                                     </tr>
                                     <c:forEach items="${files}" var="file">
                                         <tr>
@@ -66,6 +81,8 @@
                                             <td>
                                                 <a href="download/${dto.id}?id=${file.id}">다운로드</a>
                                             </td>
+                                            <td><a href="javascript:void(0);" class="delete-file"
+                                                   data-file-id="${file.id}">삭제</a></td>
                                         </tr>
                                     </c:forEach>
                                 </table>
@@ -74,13 +91,15 @@
                     </c:choose>
                     <div class="mb-3">
                         <label for="content" class="form-label">content</label>
-                        <textarea class="form-control" id="content" name="content" disabled>${dto.content}</textarea>
+                        <textarea class="form-control" id="content" name="content">${dto.content}</textarea>
                     </div>
                     <div class="mb-3">
                         <label for="writer" class="form-label">writer</label>
-                        <input type="text" class="form-control" id="writer" name="writer" value="${dto.userName}" disabled>
+                        <input type="text" class="form-control" id="writer" name="writer" value="${dto.userName}"
+                               disabled>
                     </div>
                     <a href="/${role}?id=${dto.boardId}" class="btn btn-outline-secondary">list</a>
+                    <button class="btn btn-outline-warning" onclick="modifyPost()" id="modify">modify</button>
                 </form>
             </div>
         </div>
@@ -91,16 +110,6 @@
                 <i class="fa fa-comment fa"></i> 댓글
             </div>
             <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <%--                    게시글에 댓글 달기--%>
-                        <form id="commentForm">
-                            <textarea class="form-control" id="comment" rows="3"></textarea>
-                            <button type="button" class="btn btn-dark mt-3" id="saveComment">댓글 달기</button>
-                            <br><br><br>
-                        </form>
-                    </li>
-                </ul>
                 <div class="card">
                     <ul class="list-group">
                         <%--                    게시글의 댓글 리스트--%>
@@ -118,9 +127,9 @@
                                                         ${comment.content}
                                                 </div>
                                                 <div class="justify-content-between">
-                                                    <button class="showReplyForm btn btn-outline-dark mr-2">대댓글 작성
+                                                    <button class="btn btn-outline-danger delete-reply"
+                                                            data-reply-id="${comment.id}">삭제
                                                     </button>
-                                                    <button class="btn btn-outline-danger">삭제</button>
                                                 </div>
                                             </div>
                                             <form class="replyForm" style="display: none; padding-left: 30px"><br>
@@ -155,71 +164,94 @@
 
     /** 게시글 수정 */
     function modifyPost() {
-        var requestData = {
-
-        };
-
+        var title = $("#title").val();
+        var content = $("#content").val();
         $.ajax({
             type: "POST",
             url: "/${dto.role}/modify?id=${dto.id}",
-            data: requestData,
-            success: function(response) {
-                console.log("게시물 수정 요청 성공:", response);
+            data: {
+                title: title,
+                content: content
             },
-            error: function(error) {
+            success: function (response) {
+                console.log("게시물 수정 요청 성공:", response);
+                location.reload();
+            },
+            error: function (error) {
                 console.error("게시물 수정 요청 실패:", error);
             }
         });
     }
 
-    /** 댓글 작성 버튼 클릭 */
-    $("#saveComment").click(function () {
-        var comment = document.getElementById("comment").value;
-        $.ajax({
-            type: "POST",
-            url: "/${dto.role}/comment?id=${dto.id}", // 게시글 아이디 함께 전달
-            data: {"content": comment},
-            success: function () {
-                location.reload(); // 페이지 새로고침
-            }
-        });
-    })
-
-    var replyForms = document.querySelectorAll('.replyForm'); // 여러 개의 대댓글 폼
-    var showReplyFormButtons = document.querySelectorAll('.showReplyForm'); // 여러 개의 대댓글 보여주기 버튼
-    var replyTexts = document.querySelectorAll('.replyText'); // 여러 개의 대댓글 내용
-    var replyButtons = document.querySelectorAll('.replyButton'); // 여러 개의 대댓글 작성 완료 버튼
-
-    /** 대댓글 폼을 보여주는 버튼 클릭 시 */
-    showReplyFormButtons.forEach(function (button, index) {
-        button.addEventListener('click', function () {
-            toggleReplyForm(index);
-        });
-    });
-
-    function toggleReplyForm(index) { // 인덱스로 대댓글 폼 구분
-        if (replyForms[index].style.display === 'block') {
-            replyForms[index].style.display = 'none'; // 숨김
-        } else {
-            replyForms[index].style.display = 'block'; // 보임
-        }
-    }
-
-    /** 대댓글 저장 버튼 클릭 시 */
-    replyButtons.forEach(function (button, index) {
-        button.addEventListener('click', function () {
-            var reply = replyTexts[index].value; // 인덱스에 맞는 대댓글 내용 가져오기
-            var commentId = this.getAttribute('data-comment-id'); // 댓글 아이디 가져오기
-
+    /** 이미지 & 파일 추가 */
+    $(document).ready(function () {
+        $("#modify").click(function () {
+            var formData = new FormData($("#form")[0]);
             $.ajax({
                 type: "POST",
-                url: "/${dto.role}/reply?id=" + commentId, // 댓글 아이디 함께 전달
-                data: {"content": reply},
-                success: function () {
-                    location.reload(); // 페이지 새로고침
+                url: "/${role}/addFiles?id=${dto.id}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                complete: function () {
+                    location.reload();
                 }
             });
         });
     });
+
+    /** 이미지 삭제 */
+    $(".delete-image").on("click", function () {
+        var imageId = $(this).data("image-id");
+        $.ajax({
+            type: "POST",
+            url: "/${role}/image/delete?id=" + imageId,
+            success: function (response) {
+                console.log("이미지 삭제 성공:", response);
+            },
+            error: function (error) {
+                console.error("이미지 삭제 실패:", error);
+            },
+            complete: function () {
+                // 요청이 완료되면 항상 새로고침
+                location.reload();
+            }
+        });
+    });
+
+    /** 파일 삭제 */
+    $(".delete-file").on("click", function () {
+        var fileId = $(this).data("file-id");
+        $.ajax({
+            type: "POST",
+            url: "/${role}/file/delete?id=" + fileId,
+            success: function (response) {
+                console.log("파일 삭제 성공:", response);
+            },
+            error: function (error) {
+                console.error("파일 삭제 실패:", error);
+            },
+            complete: function () {
+                location.reload();
+            }
+        });
+    });
+
+    /** 댓글 삭제 */
+    $(".delete-reply").on("click", function () {
+        var replyId = $(this).data("reply-id");
+        $.ajax({
+            type: "POST",
+            url: "/${role}/comment/delete?id=" + replyId,
+            success: function (response) {
+            },
+            error: function (error) {
+            },
+            complete: function () {
+                location.reload();
+            }
+        });
+    });
+
 </script>
 </html>

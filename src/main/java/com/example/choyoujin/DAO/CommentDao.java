@@ -16,4 +16,8 @@ public interface CommentDao {
     List<CommentDto> findAllByCommentId(int commentId); // 댓글 번호로 대댓글 리스트 가져오기
 
     List<CommentDto> selectReplies(int postId);
+
+    int getCommentLevel(int id); // 부모 댓글의 레벨 가져오기
+
+    CommentDto findById(int id); // 댓글 번호로 댓글 정보 가져오기
 }

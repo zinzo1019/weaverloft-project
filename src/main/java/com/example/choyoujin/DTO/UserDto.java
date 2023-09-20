@@ -18,6 +18,7 @@ public class UserDto {
     private String address;
     private String phone;
     private MultipartFile image;
+    private String role;
 
 //    다른 로직 변수
     private int imageId;

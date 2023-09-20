@@ -103,7 +103,7 @@
                         <c:forEach items="${list}" var="dto">
                         <tr>
                             <td>${dto.id}</td>
-                            <td>${dto.writer}</td>
+                            <td>${dto.name}</td>
                             <td><a href="/board/view?id=${dto.id}"> ${dto.title} </a></td>
                             <td><a href="/board/delete?id=${dto.id}"> 삭제 </a></td>
                         </tr>
@@ -113,6 +113,32 @@
                 </div>
             </div>
         </main>
+
+        <!-- 페이징 처리 -->
+        <div class="pagination">
+            <c:if test="${posts.hasPrevious}">
+                <a href="?page=0">첫 페이지</a>
+                <a href="?page=${posts.number - 1}">이전</a>
+            </c:if>
+
+            <c:forEach begin="0" end="${posts.totalPages - 1}" varStatus="status">
+                <c:choose>
+                    <c:when test="${status.index == posts.number}">
+                        <span>${status.index + 1}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?page=${status.index}">${status.index + 1}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:if test="${posts.hasNext}">
+                <a href="?page=${posts.number + 1}">다음</a>
+                <a href="?page=${posts.totalPages - 1}">마지막 페이지</a>
+            </c:if>
+        </div>
+
+
     </div>
 </div>
 

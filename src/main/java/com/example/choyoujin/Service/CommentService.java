@@ -20,50 +20,38 @@ public class CommentService {
         commentDao.saveComment(commentDto);
     }
 
-//    public List<CommentDto> getAllComments(int postId) {
-//        List<CommentDto> rootComments = findAllByPostId(postId); // 최상위 댓글 가져오기
-//        List<CommentDto> allComments = new ArrayList<>(); // 댓글 전체를 담을 리스트
-//        for (CommentDto rootComment : rootComments) {
-//            CommentDto commentDto = retrieveCommentsRecursively(rootComment); // 재귀함수 호출
-//            allComments.add(commentDto); // 대댓글 리스트 담기
-//        }
-//        return allComments;
-//    }
-
-//    private CommentDto retrieveCommentsRecursively(CommentDto parentComment) {
-//        List<CommentDto> childComments = findAllByCommentId(parentComment.getId()); // 댓글 아이디로 대댓글 리스트 가져오기
-//        parentComment.setReplies(childComments); // 대댓글 리스트로 초기화
-//        for (CommentDto childComment : childComments) { // 다시 재귀함수 호출
-//            retrieveCommentsRecursively(childComment);
-//        }
-//        return parentComment; // 대댓글 리스트
-//    }
-
     /** 게시글 아이디로 댓글 리스트 가져오기 */
     public List<CommentDto> findAllByPostId(int postId) {
         List<CommentDto> commentDtos = commentDao.findAllByPostId(postId);
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (CommentDto dto : commentDtos) {
-//            dto.setEncoding(decompressBytes(dto.getPicByte())); // 이미지 압축 해제
+            dto.setEncoding(decompressBytes(dto.getPicByte())); // 이미지 압축 해제
             commentDtoList.add(dto);
         }
         return commentDtoList;
     }
-
-//    /** 댓글 번호로 대댓글 리스트 가져오기 */
-//    public List<CommentDto> findAllByCommentId(int commentId) {
-//        List<CommentDto> commentDtos = commentDao.findAllByCommentId(commentId);
-//        List<CommentDto> commentDtoList = new ArrayList<>();
-//        for (CommentDto dto : commentDtos) {
-//            dto.setEncoding(decompressBytes(dto.getPicByte())); // 이미지 압축 해제
-//            commentDtoList.add(dto);
-//        }
-//        return commentDtoList;
-//    }
 
     /** 대댓글 저장하기 */
     public void saveReply(CommentDto commentDto) {
         commentDao.saveReply(commentDto);
     }
 
+    /** 부모 댓글의 레벨 가져오기 */
+    public int getCommentLevel(int id) {
+        return commentDao.getCommentLevel(id);
+    }
+
+    /** 댓글 번호로 댓글 정보 가져오기 */
+    public CommentDto findById(int id) {
+        return commentDao.findById(id);
+    }
+
+    /** 게시글 대댓글 작성 시 CommentDto 세팅 */
+    public void setCommentDto(CommentDto commentDto, int replyId, String email) {
+        CommentDto parentDtao = findById(replyId); // 부모 댓글의 레벨
+        commentDto.setLevel(parentDtao.getLevel() + 1); // 자식 댓글의 레벨 = 부모 댓글의 레벨 + 1
+        commentDto.setPostId(parentDtao.getPostId()); // 자식 댓글의 레벨 = 부모 댓글의 레벨 + 1
+        commentDto.setCommentId(replyId);
+        commentDto.setEmail(email); // 사용자 아이디 & 댓글 아이디 세팅
+    }
 }

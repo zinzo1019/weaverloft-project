@@ -25,7 +25,9 @@ public class FileService {
     @Autowired
     FileDao fileDao;
 
-    /** 사용자 이미지 저장 */
+    /**
+     * 사용자 이미지 저장
+     */
     public int saveImage(MultipartFile file) throws IOException {
         try {
             String name = file.getOriginalFilename(); // 파일 이름
@@ -45,37 +47,40 @@ public class FileService {
     public ImageDto findImageById(int id) {
         return fileDao.findImageById(id);
     }
-     int findIdByEmail(String email) {
+
+    int findIdByEmail(String email) {
         return fileDao.findIdByEmail(email);
     }
 
-    /** 파일 다운로드 */
+    /**
+     * 파일 다운로드
+     */
     public void downloadFile(HttpServletResponse response, HttpServletRequest request, FileDto fileDto, File file) {
         FileInputStream fileInputStream = null;
         ServletOutputStream servletOutputStream = null;
 
-        try{
+        try {
             String downName = null;
             String browser = request.getHeader("User-Agent");
             //파일 인코딩
-            if(browser.contains("MSIE") || browser.contains("Trident") || browser.contains("Chrome")){//브라우저 확인 파일명 encode
-                downName = URLEncoder.encode(fileDto.getName(),"UTF-8").replaceAll("\\+", "%20");
+            if (browser.contains("MSIE") || browser.contains("Trident") || browser.contains("Chrome")) {//브라우저 확인 파일명 encode
+                downName = URLEncoder.encode(fileDto.getName(), "UTF-8").replaceAll("\\+", "%20");
 
-            }else{
+            } else {
                 downName = new String(fileDto.getName().getBytes("UTF-8"), "ISO-8859-1");
             }
 
-            response.setHeader("Content-Disposition","attachment;filename=\"" + downName+"\"");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + downName + "\"");
             response.setContentType("application/octer-stream");
             response.setHeader("Content-Transfer-Encoding", "binary;");
 
             fileInputStream = new FileInputStream(file);
             servletOutputStream = response.getOutputStream();
 
-            byte b [] = new byte[1024];
+            byte b[] = new byte[1024];
             int data = 0;
 
-            while((data=(fileInputStream.read(b, 0, b.length))) != -1){
+            while ((data = (fileInputStream.read(b, 0, b.length))) != -1) {
                 servletOutputStream.write(b, 0, data);
             }
 
@@ -83,25 +88,27 @@ public class FileService {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally{
-            if(servletOutputStream!=null){
-                try{
+        } finally {
+            if (servletOutputStream != null) {
+                try {
                     servletOutputStream.close();
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(fileInputStream!=null){
-                try{
+            if (fileInputStream != null) {
+                try {
                     fileInputStream.close();
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
-    /** 문자열 압축 */
+    /**
+     * 문자열 압축
+     */
     public static byte[] compressBytes(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setInput(data);
@@ -121,7 +128,9 @@ public class FileService {
         return outputStream.toByteArray();
     }
 
-    /** 문자열 압축 풀기 & 인코딩 */
+    /**
+     * 문자열 압축 풀기 & 인코딩
+     */
     public static String decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
@@ -138,4 +147,23 @@ public class FileService {
         return Base64.getEncoder().encodeToString(outputStream.toByteArray()); // img로 띄우기 위해 인코딩
     }
 
+
+    /**
+     * 이미지 삭제하기
+     */
+    public void deleteImageById(int id) {
+        fileDao.deleteImageById(id);
+    }
+
+    /**
+     * 파일 삭제하기
+     */
+    public void deltetFileById(int id) {
+        fileDao.deleteFileById(id);
+    }
+
+    /** 댓글 삭제하기 */
+    public void deleteCommentById(int id) {
+        fileDao.deleteCommentById(id);
+    }
 }

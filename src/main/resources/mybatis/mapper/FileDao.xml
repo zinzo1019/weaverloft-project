@@ -21,4 +21,22 @@
         select id from image where tb_user_email = #{email}
     </select>
 
+<!--    아이디로 이미지 삭제하기-->
+    <select id="deleteImageById">
+        delete from post_image
+        where id = #{id}
+    </select>
+
+<!--    아이디로 파일 삭제하기-->
+    <select id="deleteFileById">
+        delete from file
+        where id = #{id}
+    </select>
+
+<!--    아이디로 댓글 삭제하기-->
+    <select id="deleteCommentById">
+        delete from comment
+        where id = #{id}
+    </select>
+
 </mapper>

@@ -2,8 +2,10 @@ package com.example.choyoujin.DAO;
 
 import com.example.choyoujin.DTO.FileDto;
 import com.example.choyoujin.DTO.ImageDto;
+import com.example.choyoujin.DTO.PageRequest;
 import com.example.choyoujin.DTO.PostDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,21 +16,35 @@ public interface PostDao {
     int deletePostById(String id); // 게시글 삭제하기
     int articleCount(); // 게시글 개수 세기
 
-    List<PostDto> findAllByBoardId(int boardId); // 게시판 번호로 게시글 가져오기
+    List<PostDto> findAllByBoardId(int boardId, int page, int size); // 게시판 번호로 게시글 가져오기
 
-    List<PostDto> findAllByRole(String role);
+    int countByBoardId(int boardId); // 게시판 번호로 게시글 개수 세기
+
+    List<PostDto> findAllByRole(String role, int page, int size);
 
     int writeDao(PostDto postDto); // 게시글 저장하기
 
     void saveImages(ImageDto imageDto);
 
-    List<ImageDto> findAllByPostId(int postId);
+    List<ImageDto> findAllByPostId(@Param("postId") int postId);
 
     int findMaxPostId();
 
     void saveFile(FileDto fileDto); // 파일 저장하기
 
     List<FileDto> findAllFilesByPostId(int postId);
-
     FileDto findFileById(int id); // 아이디로 파일 가져오기
+    int count();
+    int countByRole(String role);
+    List<PostDto> list(PageRequest pageRequest);
+
+    List<PostDto> findPostsByPage(int page, int size);
+
+    List<PostDto> searchPosts(String keyword, int page, int size); // 게시글 검색하기
+    List<PostDto> searchPostsByBoardId(int boardId, String keyword, int page, int size); // 게시판 아이디로 게시글 검색하기
+
+    int countByKeywordByGuest(String keyword);
+    int countByKeywordByBoardId(int boardId, String keyword);
+
+    void modifyPost(PostDto postDto);
 }

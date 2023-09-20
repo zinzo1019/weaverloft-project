@@ -110,12 +110,9 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    // 업로드 성공 시 처리
-                    alert(response.message);
-                    window.location.href = "/${role}/board?id=${id}"; // 리다이렉션
+                    window.location.href = "/${role}/view?id=" + response; // 리다이렉션
                 },
                 error: function (error) {
-                    // 업로드 실패 시 처리
                     alert("게시글 저장에 실패했습니다.");
                 }
             });

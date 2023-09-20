@@ -5,59 +5,49 @@
 
 <mapper namespace="com.example.choyoujin.DAO.CommentDao">
 
-<!--    게시글 번호로 댓글 리스트 가져오기-->
-<!--    <select id="findAllByPostId" resultType="com.example.choyoujin.DTO.CommentDto">-->
-<!--        select * from comment c-->
-<!--        left join tb_user u-->
-<!--        on c.tb_user_id = u.email-->
-<!--        left join image i-->
-<!--        on u.image_id = i.id-->
-<!--        where c.post_id = #{postId}-->
-<!--        AND c.comment_id IS NULL-->
-<!--    </select>-->
-
     <!-- 댓글과 대댓글을 계층적으로 검색 -->
     <select id="findAllByPostId" parameterType="int" resultMap="commentResult">
-        WITH RECURSIVE CommentHierarchy AS (
-            SELECT
-                c.id,
-                c.content,
-                c.comment_id,
-                0 AS level,
-                u.email,
-                i.pic_byte
-            FROM
-                comment c
-            LEFT JOIN tb_user u ON c.tb_user_id = u.email
-            LEFT JOIN image i ON u.image_id = i.id
-            WHERE
-                comment_id IS NULL
-              AND post_id = #{postId} -- 해당 게시글의 최상위 댓글
-
+        WITH RECURSIVE CODE_LIST(id, content, tb_user_id, post_id, comment_id, level, PATH, CYCLE) as (
+            /* 계층구조의 시작조건 쿼리 */
+            SELECT c.id,
+                   c.content,
+                   c.tb_user_id,
+                   c.post_id,
+                   c.comment_id,
+                   1,
+                   ARRAY[c.id] as PATH,
+                   false as CYCLE
+            FROM gps.yujin.comment c
+            WHERE c.comment_id IS NULL
+              AND c.post_id = #{postId}
             UNION ALL
-
-            SELECT
-                c.id,
-                c.content,
-                c.comment_id,
-                ch.level + 1 AS level,
-                u.email,
-                i.pic_byte
-
-            FROM
-                comment c
-                JOIN CommentHierarchy ch ON c.comment_id = ch.id
-                LEFT JOIN tb_user u ON c.tb_user_id = u.email
-                LEFT JOIN image i ON u.image_id = i.id
+            /*하위 데이터를 찾아가기 위한 반복조건 쿼리*/
+            SELECT c.id,
+                   c.content,
+                   c.tb_user_id,
+                   c.post_id,
+                   c.comment_id,
+                   B.level + 1,
+                   ARRAY_APPEND(B.PATH, c.id),
+                   c.id = any(B.PATH)
+            FROM gps.yujin.comment c
+                     JOIN CODE_LIST B on c.comment_id  = B.ID
+            WHERE c.comment_id = B.id
+              AND NOT CYCLE
         )
-        SELECT
-            id,
-            content,
-            level
-        FROM
-            CommentHierarchy
-        ORDER BY
-            id;
+        SELECT c.id,
+               content,
+               tb_user_id,
+               post_id,
+               comment_id,
+               path,
+               level,
+               u.name,
+               i.pic_byte
+        FROM CODE_LIST c
+        LEFT JOIN gps.yujin.tb_user u ON c.tb_user_id = u.email
+        LEFT JOIN gps.yujin.image i ON u.image_id = i.id
+        ORDER BY path
     </select>
 
     <!-- ResultMap 정의 -->
@@ -65,20 +55,14 @@
         <result property="id" column="id"/>
         <result property="content" column="content"/>
         <result property="level" column="level"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="postId" column="post_id"/>
     </resultMap>
 
-
-
-
-<!--    댓글 번호로 대댓글 리스트 가져오기-->
-<!--    <select id="findAllByCommentId" resultType="com.example.choyoujin.DTO.CommentDto">-->
-<!--        select * from comment c-->
-<!--        left join tb_user u-->
-<!--        on c.tb_user_id = u.email-->
-<!--        left join image i-->
-<!--        on u.image_id = i.id-->
-<!--        where c.comment_id = #{commentId}-->
-<!--    </select>-->
+    <!-- 부모 댓글의 레벨 가져오기 -->
+    <select id="getCommentLevel" resultType="int" parameterType="int">
+        SELECT level FROM comment WHERE id = #{id}
+    </select>
 
 <!--    댓글 번호로 댓글 정보 가져오기-->
     <select id="findById" resultType="com.example.choyoujin.DTO.CommentDto">
@@ -88,8 +72,8 @@
 
 <!--    댓글 저장하기-->
     <insert id="saveComment" parameterType="com.example.choyoujin.DTO.CommentDto">
-        insert into comment (content, tb_user_id, post_id)
-        values (#{content}, #{email}, #{postId})
+        insert into comment (content, tb_user_id, post_id, level)
+        values (#{content}, #{email}, #{postId}, 0)
     </insert>
 
 <!--    대댓글 저장하기-->
@@ -104,6 +88,5 @@
         WHERE post_id = #{postId}
         ORDER BY level ASC, id ASC;
     </select>
-
 
 </mapper>

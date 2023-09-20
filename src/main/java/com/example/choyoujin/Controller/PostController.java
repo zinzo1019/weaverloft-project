@@ -1,19 +1,12 @@
 package com.example.choyoujin.Controller;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.choyoujin.ApiResponse;
-import com.example.choyoujin.DAO.CommentDao;
 import com.example.choyoujin.DAO.PostDao;
-import com.example.choyoujin.DTO.CommentDto;
-import com.example.choyoujin.DTO.FileDto;
-import com.example.choyoujin.DTO.ImageDto;
-import com.example.choyoujin.DTO.PostDto;
+import com.example.choyoujin.DTO.*;
 import com.example.choyoujin.Service.CommentService;
 import com.example.choyoujin.Service.FileService;
-import com.example.choyoujin.Service.PostService;
-import io.swagger.annotations.Api;
+import com.example.choyoujin.Service.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -25,67 +18,59 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SimpleTimeZone;
+import java.util.*;
 
 @Controller
 public class PostController {
     @Autowired
     private PostDao postDao;
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService; // Impl
     @Autowired
     private CommentService commentService;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private CommentDao commentDao;
 
     /**
      * 게시글 개인 뷰
      */
     @RequestMapping("/{role}/view") // 권한 부여
-    public String view(HttpServletRequest request, Model model) {
+    public String view(HttpServletRequest request, Model model, @PathVariable("role") String role) {
         int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
         model.addAttribute("dto", postDao.viewDao(postId)); // 게시글 정보
 
         List<ImageDto> imageDtos = postService.getImageDtos(postId); // 게시글 아이디로 이미지 리스트 가져오기
         List<FileDto> fileDtos = postService.findAllFilesByPostId(postId); // 게시글 아이디로 파일 리스트 가져오기
-//        List<CommentDto> allComments = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
-
-        List<CommentDto> allComments = commentDao.selectReplies(postId);
-        System.out.println(allComments);
+        List<CommentDto> allComments = commentService.findAllByPostId(postId); // 댓글 리스트 가져오기
 
         model.addAttribute("images", imageDtos); // 이미지 리스트 추가
         model.addAttribute("files", fileDtos); // 파일 리스트 추가
         model.addAttribute("comments", allComments); // 댓글 리스트 추가
-
-        System.out.println(allComments);
-
+        model.addAttribute("role", role); // 댓글 리스트 추가
         return "guest/view";
     }
 
-    /** 게시글 댓글 작성하기 */
+    /**
+     * 게시글 댓글 작성하기
+     */
     @PostMapping("/{role}/comment")
     public ResponseEntity<ApiResponse> saveComments(CommentDto commentDto, HttpServletRequest request) {
         int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
-        commentDto.setPostId(postId); commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅
+        commentDto.setPostId(postId);
+        commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅
         commentService.saveComment(commentDto); // 댓글 저장
         return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
     }
 
-    /** 게시글 대댓글 작성하기 */
+    /**
+     * 게시글 대댓글 작성하기
+     */
     @PostMapping("/{role}/reply")
     public ResponseEntity<ApiResponse> saveReplys(CommentDto commentDto, HttpServletRequest request) {
         int replyId = Integer.parseInt(request.getParameter("id")); // 댓글 아이디
-
-        System.out.println("replyId is " + replyId);
-        System.out.println("commentDto.content is " + commentDto.getContent());
-
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
-        commentDto.setCommentId(replyId); commentDto.setEmail(email); // 사용자 아이디 & 댓글 아이디 세팅
+        commentService.setCommentDto(commentDto, replyId, email);
         commentService.saveReply(commentDto); // 대댓글 저장
         return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
     }
@@ -104,29 +89,28 @@ public class PostController {
      * 게시글 저장
      */
     @RequestMapping("/{role}/write")
-    public ResponseEntity<ApiResponse> write(@PathVariable("role") String role, @RequestParam("id") int id, PostDto postDto) throws IOException {
-        try {
-            PostDto setPostDto = postService.setBoardIdAndWriter(id, role, postDto); // postDto에 게시판 아이디와 사용자 이름 set
-            postDao.writeDao(setPostDto);// 게시글 저장하기
-            int postId = postService.findMaxPostId();// 게시글 아이디 가져오기
-            postService.saveImagesByPostId(postDto, postId); // 이미지 리스트 저장하기
-            postService.saveFilesByPostId(postDto, postId); // 파일 리스트 저장하기
-            return ResponseEntity.ok(new ApiResponse("게시글을 저장했습니다"));
-        } catch (Exception e) {
-            return ResponseEntity.ok(new ApiResponse("게시글을 저장했습니다")); // 파일 업로드를 안 하면 에러나길래 야매 코딩...
-        }
+    public ResponseEntity<Integer> write(@PathVariable("role") String role, @RequestParam("id") int id, PostDto postDto) throws IOException {
+        PostDto setPostDto = postService.setPostDtoForSave(id, role, postDto); // 게시판 아이디 & 사용자 정보 & 현재 날짜로 set
+        postDao.writeDao(setPostDto);// 게시글 저장하기
+        int postId = postService.findMaxPostId();// 게시글 아이디 가져오기
+        postService.saveImagesByPostId(postDto, postId); // 이미지 리스트 저장하기
+        postService.saveFilesByPostId(postDto, postId); // 파일 리스트 저장하기
+        return ResponseEntity.ok(postId); // 게시글 아이디로 응답
     }
 
     /**
      * 게시글 삭제 후 메인 페이지로 리다이렉트
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/{role}/delete")
     public String delete(HttpServletRequest request) {
         postService.deletePostById(request.getParameter("id"));
-        return "redirect:board";
+        String boardId = request.getParameter("boardId");
+        return "redirect:?id="+boardId;
     }
 
-    /** 파일 다운로드 */
+    /**
+     * 파일 다운로드
+     */
     @RequestMapping("/{role}/download/{postId}")
     public String downloadFile(@PathVariable("postId") int postId, @RequestParam("id") int id, HttpServletResponse response, HttpServletRequest request) {
         FileDto fileDto = postService.findFileById(id); // 파일 정보

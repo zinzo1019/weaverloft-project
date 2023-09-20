@@ -2,6 +2,8 @@ package com.example.choyoujin.Service;
 
 import com.example.choyoujin.DAO.BoardDao;
 import com.example.choyoujin.DTO.BoardDto;
+import com.example.choyoujin.DTO.PageRequest;
+import com.example.choyoujin.DTO.PostDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;

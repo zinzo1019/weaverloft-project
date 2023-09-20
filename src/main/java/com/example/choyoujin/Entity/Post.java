@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String writer;
+    private String name;
     private String title;
     private String content;
 }
