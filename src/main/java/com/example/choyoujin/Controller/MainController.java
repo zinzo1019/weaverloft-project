@@ -4,6 +4,8 @@ import com.example.choyoujin.DTO.*;
 import com.example.choyoujin.Service.BoardService;
 import com.example.choyoujin.Service.PostServiceImpl;
 import com.example.choyoujin.Service.UserService;
+import org.hibernate.event.spi.SaveOrUpdateEvent;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,10 +62,11 @@ public class MainController {
         Pagination pagination = getPagination(); // 페이징 처리
         String role = "ROLE_GUEST"; role = getUserRole(role); // 사용자 권한 받아오기 (없으면 ROLE_GUEST)
 
-        if (id == 0) { // 게시판 선택 전 (최근 게시글)
+        if (id == 0 || id == null) { // 게시판 선택 전 (최근 게시글)
             pagination.setTotalCount(postService.countByKeywordByGuest(keyword));
             Page<PostDto> list = postService.searchPosts(keyword, page, 5); // 최근 게시글 중 검색하기
             model.addAttribute("list", list); // 검색된 게시글 리스트
+
         } else { // 게시판 선택 후
             pagination.setTotalCount(postService.countByKeywordByBoardId(id, keyword));
             Page<PostDto> list = postService.searchPosts(id, keyword, page, 5); // 최근 게시글 중 검색하기

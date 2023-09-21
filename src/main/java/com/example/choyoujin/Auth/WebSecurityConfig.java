@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +26,11 @@ import static javax.management.Query.and;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    public CustomAuthenticationFailureHandler authenticationFailureHandler;
+    public CustomAuthenticationFailureHandler authenticationFailureHandler; // 로그인 실패 시
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler; // 로그인 성공 시
 
     // 설정이 겹치면 뒤의 설정이 앞의 설정을 덮어씀
     // 앞 부분은 가장 널은 범위로 허용 범위 설정 -> 점점 범위를 좁힘
@@ -51,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/loginForm") // 로그인 페이지의 디폴트 경로 설정
                 .loginProcessingUrl("/j_spring_security_check") // 해당 url 요청이 들어오면 authProvider로 로그인 정보를 전달하여 로그인 로직이 수행될 수 있도록 설정
+                .successHandler(authenticationSuccessHandler) // 커스텀 AuthenticationSuccessHandler 등록
                 .failureHandler(authenticationFailureHandler)
                 .usernameParameter("email") // "loginForm.jsp"에서 지정한 변수명으로 파라미터명 설정
                 .passwordParameter("pw")

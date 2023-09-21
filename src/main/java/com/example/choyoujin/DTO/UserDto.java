@@ -19,6 +19,7 @@ public class UserDto {
     private String phone;
     private MultipartFile image;
     private String role;
+    private LocalDate createDate;
 
 //    다른 로직 변수
     private int imageId;

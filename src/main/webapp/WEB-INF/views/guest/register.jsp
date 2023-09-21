@@ -12,34 +12,6 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
-<style>
-
-    /* datepicker의 불투명도 조절 스타일 */
-    .ui-datepicker {
-        opacity: 1.0; /* 불투명도 값 (0.0 - 1.0) */
-        background-color: white; /* 배경색 설정 */
-        border: 1px solid #ccc; /* 테두리 스타일 설정 */
-        font-size: 16px; /* 폰트 크기 설정 */
-    }
-    .ui-datepicker-header {
-        background-color: #4CAF50; /* 헤더 배경색 설정 */
-        color: white; /* 헤더 텍스트 색상 설정 */
-    }
-    .ui-datepicker-title {
-        font-weight: bold; /* 헤더 제목 굵게 설정 */
-    }
-    .ui-state-default {
-        background-color: #f2f2f2; /* 날짜 셀 배경색 설정 */
-    }
-    .ui-state-default:hover {
-        background-color: #ddd; /* 마우스 오버 시 배경색 변경 */
-    }
-    .ui-datepicker-calendar a {
-        color: #333; /* 날짜 텍스트 색상 설정 */
-    }
-
-</style>
-
 <script>
 
     var isDuplicated = null; // 이메일 중복 여부
@@ -407,7 +379,7 @@
                                     </div>
 
 <%--                                    도로명 주소 검색 필드--%>
-                                    <input type="text" name="address" id="address" class="form-control">
+                                    <input type="text" name="address" id="address" class="form-control" readonly>
                                     <button type="button" id="addressBtn" onclick="searchAddress()" class="btn btn-primary btn-lg">주소 검색</button>
                                     <div id="addressResult"></div><br>
 
@@ -431,6 +403,7 @@
 
 <%--                                       사진 첨부--%>
                                     <input type="file" name="image" id="imageInput" required><br><br><br>
+                                    <p id="imageErrorMessage" class="text-danger"></p>
 
                                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
 <%--                                        제출 전 유효성 검사를 하도록 onClick 지정--%>
@@ -464,3 +437,26 @@
 </body>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </html>
+
+<script>
+    /** 이미지 확장자 제한 */
+    const imageInput = document.getElementById('imageInput');
+    const imageErrorMessage = document.getElementById('imageErrorMessage');
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    imageInput.addEventListener('change', function () {
+        const fileName = this.value;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes('.' + fileExtension)) {
+            imageErrorMessage.textContent = '올바른 이미지 파일을 선택하세요.';
+            this.value = ''; // 파일 선택 취소
+        } else {
+            imageErrorMessage.textContent = '';
+        }
+    });
+</script>
+
+
+
+
+

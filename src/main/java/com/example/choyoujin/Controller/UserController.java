@@ -3,8 +3,6 @@ package com.example.choyoujin.Controller;
 import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DAO.UserDao;
 import com.example.choyoujin.DTO.UserDto;
-import com.example.choyoujin.Service.FileService;
-import com.example.choyoujin.Service.MailService;
 import com.example.choyoujin.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 import static com.example.choyoujin.Service.FileService.decompressBytes;
 
@@ -27,6 +23,16 @@ public class UserController {
     private UserDao userDao;
     @Autowired
     private UserService userService;
+
+    @GetMapping("/session")
+    @ResponseBody
+    public UserDto session() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = ((UserDetails) principal).getUsername(); // 사용자 이메일
+        UserDto userDto = userService.findUserByEmail(email); // 이메일로 사용자 찾기
+        System.out.println(userDto);
+        return userDto;
+    }
 
     /** 마이 페이지 */
     @GetMapping("/myPage")
@@ -44,8 +50,7 @@ public class UserController {
 
     /** 마이 페이지 수정 */
     @PostMapping("/updateUser")
-    public ResponseEntity<ApiResponse> updateUser(UserDto userDto) throws IOException {
-        System.out.println("userDto.name is " + userDto.getName());
+    public ResponseEntity<ApiResponse> updateUser(UserDto userDto) {
         try {
             userService.updateUser(userDto);
             return ResponseEntity.ok(new ApiResponse("수정했습니다."));

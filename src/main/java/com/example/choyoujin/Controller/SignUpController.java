@@ -29,6 +29,8 @@ public class SignUpController {
     @Autowired
     MailService mailService;
 
+    private String verificationCode;
+
     /** user 회원가입 페이지 */
     @RequestMapping("/register")
     public String registerForm() {
@@ -57,7 +59,6 @@ public class SignUpController {
         int imageId = userService.saveImageAndGetImageId(userDto); // 이미지 저장
         userService.saveUser(userDto, "ROLE_ADMIN", 1, imageId); // 사용자 저장
         return "guest/register";
-
     }
 
     /** 이메일 중복 확인 */
@@ -73,11 +74,9 @@ public class SignUpController {
         }
     }
 
-    private String verificationCode;
-
     /** 메일 전송 */
     @RequestMapping("/send-verification")
-    public ResponseEntity<ApiResponse> sendVerificationEmail(@RequestParam String email, Model model) {
+    public ResponseEntity<ApiResponse> sendVerificationEmail(@RequestParam String email) {
         System.out.println("sendVerificationEmail() 실행 중 ... ");
         verificationCode = mailService.sendMail(email);
         return ResponseEntity.ok(new ApiResponse("인증 번호를 발송했습니다."));

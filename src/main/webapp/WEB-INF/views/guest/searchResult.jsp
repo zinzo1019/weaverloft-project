@@ -13,6 +13,7 @@
                 <th>글번호</th>
                 <th>작성자</th>
                 <th>제목</th>
+                <th>수정</th>
                 <th>삭제</th>
             </tr>
             <c:forEach items="${list.content}" var="dto">
@@ -20,7 +21,11 @@
                 <td>${dto.id}</td>
                 <td>${dto.userName}</td>
                 <td><a href="${role}/view?id=${dto.id}"> ${dto.title} </a></td>
-                    <%--                 작성자와 로그인 한 사람의 id가 같다면 삭제 버튼 활성화--%>
+<%--                 작성자와 로그인 한 사람의 id가 같다면 수정 & 삭제 버튼 활성화--%>
+                <c:if test="${dto.email eq user.email}">
+                    <td><a href="/${board.role}/update/view?id=${dto.id}">수정</a></td>
+                </c:if>
+<%--                작성자와 로그인 한 사람의 id가 같다면 삭제 버튼 활성화--%>
                 <c:if test="${dto.email eq user.email}">
                     <td><a href="/delete?id=${dto.id}">삭제</a></td>
                 </c:if>

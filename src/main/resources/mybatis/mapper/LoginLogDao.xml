@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.choyoujin.DAO.LoginLogDao">
+
+    <insert id="saveLoginLog" parameterType="com.example.choyoujin.DTO.LoginLogDto">
+        INSERT INTO login_log (tb_user_id, login_date)
+        VALUES (#{email}, #{loginDate})
+    </insert>
+
+</mapper>

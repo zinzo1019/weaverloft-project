@@ -86,8 +86,8 @@
     <!-- 게시글 수정하기 -->
     <update id="modifyPost" parameterType="com.example.choyoujin.DTO.PostDto">
         UPDATE post
-        SET title = #{title},
-            content = #{content},
+        SET title       = #{title},
+            content     = #{content},
             update_date = #{updateDate},
             update_time = #{updateTime}
         WHERE id = #{id}
@@ -120,17 +120,18 @@
         OFFSET #{page}
     </select>
 
-    <!-- 게시글 검색 -->
+    <!-- 게시글 검색 (ROLE_GUEST) -->
     <select id="searchPosts" resultType="com.example.choyoujin.DTO.PostDto">
         SELECT *, u.name as userName
         FROM post p
                  LEFT JOIN tb_user u
                            ON p.tb_user_id = u.email
-        WHERE (title LIKE '%' || #{keyword} || '%'
-            OR
-               p.content LIKE '%' || #{keyword} || '%'
-            OR
-               u.name LIKE '%' || #{keyword} || '%')
+        WHERE p.role = 'ROLE_GUEST'
+          and (title LIKE '%' || #{keyword} || '%'
+           OR
+            p.content LIKE '%' || #{keyword} || '%'
+           OR
+            u.name LIKE '%' || #{keyword} || '%')
         ORDER BY id DESC
             LIMIT #{size}
         OFFSET #{page}
@@ -138,7 +139,7 @@
 
     <!-- 게시글 검색 -->
     <select id="searchPostsByBoardId" resultType="com.example.choyoujin.DTO.PostDto">
-        SELECT *
+        SELECT *, u.name as userName
         FROM post p
                  LEFT JOIN tb_user u
                            ON p.tb_user_id = u.email

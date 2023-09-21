@@ -22,6 +22,9 @@ public class FindController {
     @Autowired
     MailService mailService;
 
+    String tempPw = null; // 임시 비밀번호
+    String Exemail = null;
+
     /** 이메일 찾기 페이지 */
     @GetMapping("/findEmail")
     public String findEmailPage() {
@@ -56,9 +59,6 @@ public class FindController {
     public String findPwPage(String email) {
         return "guest/findPw";
     }
-
-    String tempPw = null; // 임시 비밀번호
-    String Exemail = null;
 
     /** 비밀번호 찾기 - 임시 비밀번호 전송 */
     @PostMapping("/findPw")

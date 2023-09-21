@@ -3,8 +3,9 @@ package com.example.choyoujin.DAO;
 import com.example.choyoujin.DTO.ImageDto;
 import com.example.choyoujin.DTO.UserDto;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,11 @@ public interface UserDao {
     void updateUser(UserDto userDto);
 
     void updateImage(ImageDto image);
+    int countSignUpByMonth(LocalDate startDate, LocalDate endDate);
+
+    int countSignInByMonth(YearMonth month);
+
+    int countSignInByMonth(LocalDate startDate, LocalDate endDate);
+
+    List<UserDto> findAllUsers(); // 모든 사용자 리스트 가져오기
 }
