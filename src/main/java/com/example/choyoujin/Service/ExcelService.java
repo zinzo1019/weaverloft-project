@@ -11,6 +11,59 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelService {
+
+    /** 사용자 데이터 삽입하기 */
+    void insertUserData(List<UserDto> userDtos) {
+
+    }
+
+    /** 사용자 등록 엑셀 서식 만들기 */
+    public static void createSampleExcelFile(String filePath) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sample");
+        makeSampleHeader(sheet, workbook); // 헤더
+
+        // 엑셀 파일 저장
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+    }
+
+    /** 사용자 등록 엑셀 서식 헤더 만들기 */
+    private static void makeSampleHeader(Sheet sheet, Workbook workbook) {
+        // 열의 폭 설정
+        sheet.setColumnWidth(0, 5000); // 이메일 열
+        sheet.setColumnWidth(1, 3000); // 사용자 이름 열
+        sheet.setColumnWidth(2, 4000); // 비밀번호
+        sheet.setColumnWidth(3, 5000); // 전화번호
+        sheet.setColumnWidth(4, 8000); // 주소
+        sheet.setColumnWidth(5, 3000); // 생년월일
+        sheet.setColumnWidth(6, 2000); // 성별
+
+        // 헤더 행 생성
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("이메일");
+        headerRow.createCell(1).setCellValue("사용자 이름");
+        headerRow.createCell(2).setCellValue("비밀번호");
+        headerRow.createCell(3).setCellValue("전화번호");
+        headerRow.createCell(4).setCellValue("주소");
+        headerRow.createCell(5).setCellValue("생년월일");
+        headerRow.createCell(6).setCellValue("성별");
+
+        // 헤더 셀 스타일 설정
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex()); // 헤더 배경색
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        Font headerFont = workbook.createFont();
+        headerFont.setColor(IndexedColors.BLACK.getIndex()); // 헤더 텍스트 색상
+        headerStyle.setFont(headerFont);
+
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            headerRow.getCell(i).setCellStyle(headerStyle);
+        }
+    }
+
     /** 엑셀 파일 만들기 */
     public static void createExcelFile(List<UserDto> userDtos, String filePath) throws IOException {
         // 회원가입 날짜로 정렬

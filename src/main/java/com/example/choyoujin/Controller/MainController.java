@@ -4,8 +4,6 @@ import com.example.choyoujin.DTO.*;
 import com.example.choyoujin.Service.BoardService;
 import com.example.choyoujin.Service.PostServiceImpl;
 import com.example.choyoujin.Service.UserService;
-import org.hibernate.event.spi.SaveOrUpdateEvent;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +28,6 @@ public class MainController {
     public String root(@RequestParam(name = "id", required = false) Integer id,
                        @RequestParam(defaultValue = "1") int page,
                        Model model) throws Exception {
-
         boardService.getAllBoardList(model); // 모델에 게시판 리스트 담기
         getUserSession(model); // 모델에 사용자 리스트 담기
 
@@ -50,17 +47,19 @@ public class MainController {
         }
         model.addAttribute("pagination", pagination);
         model.addAttribute("list", list);
-
         return "guest/main";
     }
 
-    /** 게시글 검색 */
+    /**
+     * 게시글 검색
+     */
     @PostMapping("/search")
     public String root(@RequestParam(name = "id", required = false) Integer id, // 게시판 아이디
                        @RequestParam(defaultValue = "1") int page, Model model, String keyword) throws Exception {
         getUserSession(model); // 모델에 사용자 리스트 담기
         Pagination pagination = getPagination(); // 페이징 처리
-        String role = "ROLE_GUEST"; role = getUserRole(role); // 사용자 권한 받아오기 (없으면 ROLE_GUEST)
+        String role = "ROLE_GUEST";
+        role = getUserRole(role); // 사용자 권한 받아오기 (없으면 ROLE_GUEST)
 
         if (id == 0 || id == null) { // 게시판 선택 전 (최근 게시글)
             pagination.setTotalCount(postService.countByKeywordByGuest(keyword));
@@ -88,7 +87,9 @@ public class MainController {
         }
     }
 
-    /** 사용자 권한 받아오기 */
+    /**
+     * 사용자 권한 받아오기
+     */
     private String getUserRole(String role) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -98,7 +99,9 @@ public class MainController {
         return role;
     }
 
-    /** Pagination 생성 */
+    /**
+     * Pagination 생성
+     */
     private static Pagination getPagination() {
         Pagination pagination = new Pagination();
         pagination.setPageRequest(new PageRequest());

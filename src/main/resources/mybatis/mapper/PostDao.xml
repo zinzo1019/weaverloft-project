@@ -17,7 +17,7 @@
         from post p
                  left join board b on p.board_id = b.id
                  left join tb_user u on p.tb_user_id = u.email
-        where board_id = #{boardId}
+        where p.board_id = #{boardId}
         ORDER BY p.id DESC
             LIMIT #{size}
         OFFSET #{page}

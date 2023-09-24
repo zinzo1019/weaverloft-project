@@ -44,8 +44,8 @@
         <div class="col-3 bd-sidebar">
 <%--            게시판 리스트--%>
             <ul class="nav">
-                <li>일반 게시판</li>
-                <c:forEach items="${guestbBoards}" var="board">
+                <li>일반 게시판fff</li>
+                <c:forEach items="${guestBoards}" var="board">
                     <li><a href="/${board.role}/board?id=${board.id}" >${board.name} </a></li>
                 </c:forEach>
 

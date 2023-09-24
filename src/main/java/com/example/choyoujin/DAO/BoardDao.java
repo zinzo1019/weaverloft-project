@@ -12,4 +12,10 @@ public interface BoardDao {
     List<BoardDto> findBoardListByRole(String role);
 
     BoardDto findById(int id);
+
+    void saveParentBoard(BoardDto boardDto);
+
+    void saveChildBoard(BoardDto boardDto);
+
+    List<BoardDto> findAll(String role);
 }

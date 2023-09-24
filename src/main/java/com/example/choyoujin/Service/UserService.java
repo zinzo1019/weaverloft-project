@@ -35,13 +35,13 @@ public class UserService {
     public boolean saveUser(UserDto userDto, String role, int enabled, int imageId) {
         // 회원가입 날짜
         LocalDate createDate = LocalDate.now();
-        System.out.println(createDate);
         userDto.setCreateDate(createDate);
         if (isUser(userDto.getEmail()) == false) {
             // 암호화
             String pwd = pwdEncoder.encode(userDto.getPw());
             userDto.setPw(pwd);
             // 사용자 저장
+            userDto.setBirth(LocalDate.parse(userDto.getBirth_string())); // 생년월일 String -> LocalDate 형 변환
             userDao.saveUser(userDto, role, enabled, imageId);
             System.out.println("사용자를 저장했습니다.");
             return true; // 첫 회원가입
@@ -116,6 +116,7 @@ public class UserService {
      */
     public void updateUser(UserDto userDto) throws IOException {
         // 사용자 정보 업데이트 (이미지 제외)
+        userDto.setBirth(LocalDate.parse(userDto.getBirth_string()));
         userDao.updateUser(userDto);
 
         if (userDto.getImage() != null) {
@@ -182,14 +183,14 @@ public class UserService {
 //    /**
 //     * 일일 회원가입자 수
 //     */
-//    public List<Integer> countSignUpByDay(List<YearMonth> get5Months) {
+//    public List<ChartDto> countSignUpByDay(List<YearMonth> get5Months) {
 //
 //    }
 //
 //    /**
 //     * 일일 로그인 수
 //     */
-//    public List<Integer> countSignInByDay(List<YearMonth> get5Months) {
+//    public List<ChartDto> countSignInByDay(List<YearMonth> get5Months) {
 //    }
 
     /**

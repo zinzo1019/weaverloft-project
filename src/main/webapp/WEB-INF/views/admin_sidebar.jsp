@@ -19,8 +19,8 @@
                 </a>
             </li>
             <li>
-                <a href="#" style="font-size: 16px; font-weight: bold; color: #000;">
-                    <i class="bi bi-person"></i> 게시판 추가
+                <a href="board" style="font-size: 16px; font-weight: bold; color: #000;">
+                    <i class="bi bi-person"></i> 게시판 관리
                 </a>
             </li>
             <li>

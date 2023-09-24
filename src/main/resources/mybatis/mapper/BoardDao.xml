@@ -22,4 +22,69 @@
         where id = #{id}
     </select>
 
+<!--    최상위 게시판 저장하기-->
+    <insert id="saveParentBoard">
+        insert into board (name, tb_user_id, role, level)
+        values (#{name}, #{user}, #{role}, 0)
+    </insert>
+
+<!--    자식 게시판 저장하기-->
+    <insert id="saveChildBoard">
+        insert into board (name, tb_user_id, role, level, board_id)
+        values (#{name}, #{user}, #{role}, #{level}, #{boardId})
+    </insert>
+
+    <!-- 게시판을 계층적으로 검색 -->
+    <select id="findAll" parameterType="String" resultMap="boardResult">
+        WITH RECURSIVE CODE_LIST(id, name, tb_user_id, board_id, cnt, role, level, PATH, CYCLE) as (
+            /* 계층구조의 시작조건 쿼리 */
+            SELECT bo.id,
+                   bo.name,
+                   bo.tb_user_id,
+                   bo.board_id,
+                   bo.cnt,
+                   bo.role,
+                   1,
+                   ARRAY[bo.id] as PATH,
+                   false as CYCLE
+            FROM gps.yujin.board bo
+            WHERE bo.board_id IS NULL
+              AND bo.role = #{role}
+            UNION ALL
+            /*하위 데이터를 찾아가기 위한 반복조건 쿼리*/
+            SELECT bo.id,
+                   bo.name,
+                   bo.tb_user_id,
+                   bo.board_id,
+                   bo.cnt,
+                   bo.role,
+                   B.level + 1,
+                   ARRAY_APPEND(B.PATH, bo.id),
+                   bo.id = any(B.PATH)
+            FROM gps.yujin.board bo
+                     JOIN CODE_LIST B on bo.board_id  = B.ID
+            WHERE bo.board_id = B.id
+              AND NOT CYCLE
+        )
+        SELECT c.id,
+               name,
+               tb_user_id,
+               board_id,
+               cnt,
+               role,
+               level
+        FROM CODE_LIST c
+        ORDER BY path
+    </select>
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="boardResult" type="com.example.choyoujin.DTO.BoardDto">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="boardId" column="board_id"/>
+        <result property="cnt" column="cnt"/>
+        <result property="role" column="role"/>
+        <result property="level" column="level"/>
+    </resultMap>
+
 </mapper>

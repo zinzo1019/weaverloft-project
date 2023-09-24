@@ -4,20 +4,25 @@
 <html>
 <head>
     <%--    bootstrap--%>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" name="viewport"
+          content="width=device-width, initial-scale=1">
+    <!-- jQuery 및 jQuery UI 스크립트 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <title>메인 페이지</title>
-<%--        jquery 사용--%>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <%--        jquery 사용--%>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <script>
-
     var isDuplicated = null; // 이메일 중복 여부
     var verifyCheck = false; // 메일 인증 여부
     var mailSendCheck = false; // 메일 인증 번호 발송 여부
-
 
     // 아이디 중복 체크
     $(document).ready(function () {
@@ -42,16 +47,14 @@
 
     function Validation() {
         //변수에 저장
-
         var email = document.getElementById("email")
         var pw = document.getElementById("pw")
         var cpw = document.getElementById("cpw")
         var name = document.getElementById("name")
         var gender = document.querySelector('input[name="gender"]:checked').value;
         var address = document.getElementById("address")
-        var birth = document.getElementById("birth")
+        var birth_string = document.getElementById("birth")
         var phone = document.getElementById("phone")
-        var me = document.getElementById("me")
         var code = document.getElementById("verificationCode")
         var image = document.getElementById("imageInput")
 
@@ -133,13 +136,13 @@
             return false;
         }
         // 생일 확인
-        if (birth.value == "") {
+        if (birth_string.value == "") {
             alert("생년월일를 입력하세요.")
-            birth.focus();
+            birth_string.focus();
             return false;
-        } else if (!regBirth.test(birth.value)) {
+        } else if (!regBirth.test(birth_string.value)) {
             alert("생년월일를 정확하게 입력해주세요.")
-            birth.focus();
+            birth_string.focus();
             return false;
         }
         // 전화번호 확인
@@ -152,36 +155,18 @@
             phone.focus();
             return false;
         }
-        // //자기소개 확인
-        // if (me.value.length <= 10) {
-        //     alert("자기소개는 최소 10글자를 입력해주세요.")
-        //     me.focus();
-        //     return false;
-        // }
 
         /** 유효성 문제 없을 시 폼에 submit */
         if (verifyCheck) {
-            console.log("verifyCheck is okay")
-            console.log("uploadButton is clicked...")
-
-            var email = $("#email").val();
-            var pw = $("#pw").val();
-            var name = $("#name").val();
-            var gender = document.querySelector('input[name="gender"]:checked').value;
-            var address = $("#address").val();
-            var phone = $("#phone").val();
-            var birth = $("#birth").val();
-            var imageInput = $("#imageInput")[0].files[0];
-
             var formData = new FormData();
-            formData.append("email", email);
-            formData.append("pw", pw);
-            formData.append("name", name);
-            formData.append("gender", gender);
-            formData.append("address", address);
-            formData.append("phone", phone);
-            formData.append("birth", birth);
-            formData.append("image", imageInput);
+            formData.append("email", $("#email").val());
+            formData.append("pw", $("#pw").val());
+            formData.append("name", $("#name").val());
+            formData.append("gender", document.querySelector('input[name="gender"]:checked').value);
+            formData.append("address", $("#address").val());
+            formData.append("phone", $("#phone").val());
+            formData.append("birth_string", $("#birth").val());
+            formData.append("image", $("#imageInput")[0].files[0]);
 
             $.ajax({
                 type: "POST",
@@ -205,7 +190,6 @@
     $(document).ready(function () {
         // 인증 번호 발송 버튼 클릭
         $("#sendVerification").click(function () {
-            console.log("sendVerifiaction is clicked...")
             var email = $("#email").val(); // 이메일
             $.ajax({
                 url: "/guest/send-verification",
@@ -296,7 +280,6 @@
             input.value = phone.slice(0, 3) + '-' + phone.slice(3, 7) + '-' + phone.slice(7, 11);
         }
     }
-
 </script>
 
 <body>
@@ -416,10 +399,8 @@
 
                             </div>
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
                                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
                                      class="img-fluid" alt="Sample image">
-
                             </div>
                             </div>
                         </div>

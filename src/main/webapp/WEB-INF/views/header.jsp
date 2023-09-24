@@ -33,7 +33,7 @@
             </form>
             <div class="text-end">
                 <c:if test="${not empty pageContext.request.userPrincipal}">
-                    <p><a href="/user/myPage">
+                    <p><a href="/ROLE_ADMIN/myPage">
                         <span id="userNameDisplay"></span></a>님, 환영합니다! </p>
                     <div class="admin-page"></div>
                     <a href="/logout" class="btn btn-outline-dark btn-sm ms-2">로그아웃</a>
@@ -55,7 +55,7 @@
 
 <script>
     $.ajax({
-        url: '/user/session',
+        url: '/ROLE_ADMIN/session',
         type: 'GET',
         dataType: 'json',
         success: function (data) {

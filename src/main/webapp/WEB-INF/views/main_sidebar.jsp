@@ -9,17 +9,21 @@
         <%--                게시판 리스트--%>
         <ul class="list-unstyled components">
             <%--                    로그인 안 했을 땐 일반 게시판만 보임--%>
-            <li>일반 게시판</li>
-            <c:forEach items="${guestbBoards}" var="board">
-                <li><a href="/${board.role}?id=${board.id}">${board.name} </a></li>
-            </c:forEach>
+            <h5 style="font-size: 20px; font-weight: bold; color: #193990;">일반 게시판</h5>
+            <c:forEach items="${guestBoards}" var="board">
+                <li><a href="/${board.role}?id=${board.id}"
+                       style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                </li>
+            </c:forEach><br><br>
 
             <%--                    로그인 상태--%>
             <c:if test="${not empty pageContext.request.userPrincipal}">
-                <li>사용자 게시판</li>
+                <h5 style="font-size: 20px; font-weight: bold; color: #193990;">사용자 게시판</h5>
                 <c:forEach items="${memberBoards}" var="board">
-                    <li><a href="/${board.role}?id=${board.id}">${board.name} </a></li>
-                </c:forEach>
+                    <li><a href="/${board.role}?id=${board.id}"
+                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                    </li>
+                </c:forEach><br><br>
 
                 <%--                        관리자 권한--%>
                 <c:set var="isAdmin" value="false"/>
@@ -29,9 +33,11 @@
                     </c:if>
                 </c:forEach>
                 <c:if test="${isAdmin}">
-                    <li>관리자 게시판</li>
+                    <h5 style="font-size: 20px; font-weight: bold; color: #193990;">관리자 게시판</h5>
                     <c:forEach items="${adminBoards}" var="board">
-                        <li><a href="/${board.role}?id=${board.id}">${board.name} </a></li>
+                        <li><a href="/${board.role}?id=${board.id}"
+                               style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                        </li>
                     </c:forEach>
                 </c:if>
             </c:if>

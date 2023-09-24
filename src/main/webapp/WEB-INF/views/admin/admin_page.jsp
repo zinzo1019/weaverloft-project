@@ -32,14 +32,8 @@
 <!-- 사이드 바를 포함 -->
 <jsp:include page="../admin_sidebar.jsp" />
 
-
-
-
 <!-- 오른쪽 컨텐츠에 왼쪽 마진을 주어 겹치지 않게 설정 -->
 <div id="content" style="margin-left: 300px;">
-
-
-
 
     <h2>달별 회원가입 수</h2>
     <div style="width: 80%; margin: 0 auto;">
@@ -51,8 +45,6 @@
     </div>
 
 </div>
-
-
 
 <%--    bootstrap--%>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

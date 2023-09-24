@@ -16,27 +16,6 @@
 </head>
 
 <style>
-    /*.bd-sidebar {*/
-    /*    position: sticky;*/
-    /*    top: 4rem;*/
-    /*    z-index: 1000;*/
-    /*    height: calc(100vh - 4rem);*/
-    /*    background: #eee;*/
-    /*    border-right: 1px solid rgba(0, 0, 0, .1);*/
-    /*    overflow-y: auto;*/
-    /*    min-width: 160px;*/
-    /*    max-width: 220px;*/
-    /*}*/
-
-    /*.bd-sidebar .nav {*/
-    /*    display: block;*/
-    /*}*/
-
-    /*.bd-sidebar .nav > li > a {*/
-    /*    display: block;*/
-    /*    padding: .25rem 1.5rem;*/
-    /*    font-size: 90%;*/
-    /*}*/
 </style>
 
 <script>

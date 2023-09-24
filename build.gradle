@@ -74,6 +74,12 @@ dependencies {
     // apache POI - excel download
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
 
+    // Apache POI dependencies for Excel parsing
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
+
+    // Scheduler
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
 }
 
 tasks.named('test') {

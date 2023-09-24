@@ -30,18 +30,49 @@
 <body>
 
 <!-- 사이드 바를 포함 -->
-<jsp:include page="../admin_sidebar.jsp" />
+<jsp:include page="../admin_sidebar.jsp"/>
 
 
 <!-- 오른쪽 컨텐츠에 왼쪽 마진을 주어 겹치지 않게 설정 -->
 <div id="content" style="margin-left: 300px;">
-`
+    `
     <div class="container mt-5">
         <h1 class="text-center">사용자 정보 다운로드</h1>
         <div class="text-center mt-3">
             <a class="btn btn-primary" href="/ROLE_ADMIN/download/user">사용자 리스트 다운로드</a>
         </div>
     </div>
+
+    <div class="container mt-5">
+        <h1 class="text-center">사용자 등록 엑셀 서식</h1>
+        <div class="text-center mt-3">
+            <a class="btn btn-primary" href="/ROLE_ADMIN/download/sample">서식 다운로드</a>
+        </div>
+    </div><br><br>
+
+    <h1 class="text-center">사용자 데이터 업로드</h1>
+    <div class="card-body">
+        <form enctype="multipart/form-data">
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="input-group">
+                            <input type="file" id="excelFile" accept=".xlsx, .xls" class="form-control" required style="max-width: 200px;"><br><br><br>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary" type="button" style="height: 38px;"
+                                        onclick="document.getElementById('excelFile').click()">
+                                    파일 선택
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            <div class="form-group text-center">
+                <button class="btn btn-primary" onclick="uploadExcel()">사용자 업로드</button>
+            </div>
+        </form>
+    </div>
+
 </div>
 
 <!-- 부트스트랩 JS 및 jQuery 추가 -->
@@ -134,5 +165,27 @@
             console.error('데이터를 불러오는 중 오류가 발생했습니다.');
         }
     });
+
+    /** 사용자 엑셀 파일 업로드 */
+    function uploadExcel() {
+        var formData = new FormData();
+        var excelFileInput = document.getElementById('excelFile'); // 파일 입력 필드
+        var file = excelFileInput.files[0]; // 선택한 파일
+        formData.append('file', file);
+        $.ajax({
+            url: 'upload/user',
+            type: 'POST',
+            data: formData,
+            processData: false, // 데이터 처리를 jQuery에 맡김
+            contentType: false, // 컨텐츠 타입을 false로 설정하여 jQuery가 자동으로 설정
+            success: function (data) {
+            },
+            error: function () {
+            },
+            complete: function () {
+                location.reload();
+            }
+        });
+    }
 </script>
 </html>

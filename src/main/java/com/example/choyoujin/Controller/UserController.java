@@ -3,6 +3,7 @@ package com.example.choyoujin.Controller;
 import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DAO.UserDao;
 import com.example.choyoujin.DTO.UserDto;
+import com.example.choyoujin.Service.BoardService;
 import com.example.choyoujin.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.choyoujin.Service.FileService.decompressBytes;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/ROLE_ADMIN")
 public class UserController {
 
     @Autowired
     private UserDao userDao;
     @Autowired
     private UserService userService;
+    @Autowired
+    private BoardService boardService;
 
     @GetMapping("/session")
     @ResponseBody
@@ -51,6 +54,8 @@ public class UserController {
     /** 마이 페이지 수정 */
     @PostMapping("/updateUser")
     public ResponseEntity<ApiResponse> updateUser(UserDto userDto) {
+        System.out.println(userDto);
+
         try {
             userService.updateUser(userDto);
             return ResponseEntity.ok(new ApiResponse("수정했습니다."));
@@ -64,6 +69,14 @@ public class UserController {
     public String userListPage(Model model) {
         model.addAttribute("users", userDao.list());
         return "admin/userlist";
+    }
+
+    /** 게시판 관리 페이지 */
+    @GetMapping(value = "/board")
+    public String manageBoardPage(Model model) {
+        // 게시판 정보 가져오기
+        boardService.getAllBoardList(model); // 모델에 게시판 리스트 담기
+        return "admin/board";
     }
 
 }
