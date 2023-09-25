@@ -5,37 +5,50 @@
 
 <mapper namespace="com.example.choyoujin.DAO.FileDao">
 
-<!--    아이디로 사용자 사진 찾기-->
+    <!--    아이디로 사용자 사진 찾기-->
     <select id="findImageById" resultType="com.example.choyoujin.DTO.ImageDto">
-        select * from image where id = #{id}
+        select *
+        from image
+        where id = #{id}
     </select>
 
-<!--    사용자 사진 저장하기-->
+    <!--    사용자 사진 저장하기-->
     <insert id="saveImage" parameterType="com.example.choyoujin.DTO.ImageDto" useGeneratedKeys="true" keyProperty="id">
         insert into image (name, type, pic_byte)
         values (#{name}, #{type}, #{picByte})
     </insert>
 
-<!--    이메일로 이미지 찾기-->
+    <!--    이메일로 이미지 찾기-->
     <select id="findIdByEmail" resultType="com.example.choyoujin.DTO.ImageDto">
-        select id from image where tb_user_email = #{email}
+        select id
+        from image
+        where tb_user_email = #{email}
     </select>
 
-<!--    아이디로 이미지 삭제하기-->
+    <!--    아이디로 이미지 삭제하기-->
     <select id="deleteImageById">
-        delete from post_image
+        delete
+        from post_image
         where id = #{id}
     </select>
 
-<!--    아이디로 파일 삭제하기-->
+    <!--    이미지 null 값 저장하기-->
+    <select id="saveNullImage" resultType="_int">
+        insert into image (name, pic_byte, type)
+        values (null, null, null)
+    </select>
+
+    <!--    아이디로 파일 삭제하기-->
     <select id="deleteFileById">
-        delete from file
+        delete
+        from file
         where id = #{id}
     </select>
 
-<!--    아이디로 댓글 삭제하기-->
+    <!--    아이디로 댓글 삭제하기-->
     <select id="deleteCommentById">
-        delete from comment
+        delete
+        from comment
         where id = #{id}
     </select>
 

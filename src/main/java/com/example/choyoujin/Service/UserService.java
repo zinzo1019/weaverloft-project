@@ -41,11 +41,11 @@ public class UserService {
             String pwd = pwdEncoder.encode(userDto.getPw());
             userDto.setPw(pwd);
             // 사용자 저장
-            userDto.setBirth(LocalDate.parse(userDto.getBirth_string())); // 생년월일 String -> LocalDate 형 변환
+            if (userDto.getBirth_string() != null)
+                userDto.setBirth(LocalDate.parse(userDto.getBirth_string())); // 생년월일 String -> LocalDate 형 변환
             userDao.saveUser(userDto, role, enabled, imageId);
             System.out.println("사용자를 저장했습니다.");
             return true; // 첫 회원가입
-
         } else {
             System.out.println("이미 회원가입된 사용자입니다.");
             return true; // 이미 가입된 회원
@@ -264,4 +264,26 @@ public class UserService {
         return userDao.findAllUsers();
     }
 
+    /** 가장 최근 이미지 아이디 가져오기 */
+    public int findLastImageId() {
+        return userDao.findLastImageId();
+    }
+
+    /** 엑셀 파일로 사용자 저장 시 null 이미지 데이터 저장 */
+    public int saveNullImageAndGetImageId() {
+        fileService.saveNullImage();
+        return userDao.findLastImageId();
+    }
+
+    public List<String> findDormantUsers(Date dormantThresholdDate) {
+        return userDao.findDormantUsers(dormantThresholdDate);
+    }
+
+    public void updateEnabled(String email) {
+        userDao.updateEnabled(email);
+    }
+
+    public void updateUserLastActivityDate(String email, Date currentActivityDate) {
+        userDao.updateUserLastActivityDate(email, currentActivityDate);
+    }
 }

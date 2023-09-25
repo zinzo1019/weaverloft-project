@@ -87,4 +87,11 @@
         <result property="level" column="level"/>
     </resultMap>
 
+<!--    게시판 아이디로 게시판 삭제하기-->
+    <select id="deleteByBoardId">
+        delete
+        from board
+        where id = #{boardId}
+    </select>
+
 </mapper>

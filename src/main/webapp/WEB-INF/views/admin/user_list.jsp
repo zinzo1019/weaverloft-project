@@ -48,25 +48,27 @@
         <div class="text-center mt-3">
             <a class="btn btn-primary" href="/ROLE_ADMIN/download/sample">서식 다운로드</a>
         </div>
-    </div><br><br>
+    </div>
+    <br><br>
 
     <h1 class="text-center">사용자 데이터 업로드</h1>
     <div class="card-body">
         <form enctype="multipart/form-data">
+            <div class="d-flex justify-content-center align-items-center">
                 <div class="d-flex justify-content-center align-items-center">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="input-group">
-                            <input type="file" id="excelFile" accept=".xlsx, .xls" class="form-control" required style="max-width: 200px;"><br><br><br>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-primary" type="button" style="height: 38px;"
-                                        onclick="document.getElementById('excelFile').click()">
-                                    파일 선택
-                                </button>
-                            </div>
+                    <div class="input-group">
+                        <input type="file" id="excelFile" accept=".xlsx, .xls" class="form-control" required
+                               style="max-width: 200px;"><br><br><br>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="button" style="height: 38px;"
+                                    onclick="document.getElementById('excelFile').click()">
+                                파일 선택
+                            </button>
                         </div>
                     </div>
-
                 </div>
+
+            </div>
             <div class="form-group text-center">
                 <button class="btn btn-primary" onclick="uploadExcel()">사용자 업로드</button>
             </div>
@@ -172,6 +174,7 @@
         var excelFileInput = document.getElementById('excelFile'); // 파일 입력 필드
         var file = excelFileInput.files[0]; // 선택한 파일
         formData.append('file', file);
+        alert("test")
         $.ajax({
             url: 'upload/user',
             type: 'POST',
@@ -179,10 +182,23 @@
             processData: false, // 데이터 처리를 jQuery에 맡김
             contentType: false, // 컨텐츠 타입을 false로 설정하여 jQuery가 자동으로 설정
             success: function (data) {
+                alert(data + '1')
+                // alert("저장했습니다.")
             },
-            error: function () {
+            error: function (xhr) {
+                alert(data + '2')
+                alert(xhr);
+                if (xhr.status === 400) {
+                    // JSON 파싱하여 예외 메시지를 alert로 표시
+                    var errorData = JSON.parse(xhr.responseText);
+                    alert("예외가 발생했습니다: " + errorData.error);
+                } else {
+                    alert("예외가 발생했습니다: " + xhr.status + " " + xhr.statusText);
+                }
             },
             complete: function () {
+                alert('3')
+
                 location.reload();
             }
         });

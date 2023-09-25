@@ -10,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
@@ -40,7 +38,6 @@ public class SignUpController {
     /** user 회원가입 로직 */
     @RequestMapping("/register-process")
     public String registerProcess(UserDto userDto) {
-        System.out.println("register-process() starts...");
         int imageId = userService.saveImageAndGetImageId(userDto); // 이미지 저장
         userService.saveUser(userDto, "ROLE_USER", 1, imageId); // 사용자 저장
         return "guest/register";
@@ -54,8 +51,7 @@ public class SignUpController {
 
     /** admin 회원가입 로직 */
     @RequestMapping("/admin-register-process")
-    public String adminRegisterProcess(UserDto userDto, RedirectAttributes redirectAttributes) throws IOException {
-        System.out.println("register-process() starts...");
+    public String adminRegisterProcess(UserDto userDto) throws IOException {
         int imageId = userService.saveImageAndGetImageId(userDto); // 이미지 저장
         userService.saveUser(userDto, "ROLE_ADMIN", 1, imageId); // 사용자 저장
         return "guest/register";

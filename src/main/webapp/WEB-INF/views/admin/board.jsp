@@ -61,6 +61,20 @@
         background-color: #0056b3; /* 호버 상태에서 배경색 변경 */
     }
 
+    /* 추가 버튼 스타일 */
+    .deleteBoard {
+        background-color: #007bff; /* 배경색 */
+        color: #fff; /* 글자색 */
+        border: none; /* 테두리 없음 */
+        border-radius: 5px; /* 둥근 모서리 */
+        padding: 4px 8px; /* 내부 여백 */
+        cursor: pointer; /* 커서 모양 변경 (손가락 모양) */
+    }
+
+    .deleteBoard:hover {
+        background-color: #0056b3; /* 호버 상태에서 배경색 변경 */
+    }
+
 </style>
 
 <script>
@@ -73,13 +87,12 @@
 
 <!-- 오른쪽 컨텐츠에 왼쪽 마진을 주어 겹치지 않게 설정 -->
 <div id="content" style="margin-left: 300px;">
-    <div class="p-4" style="width: 200px;">
+    <div class="p-4" style="width: 600px;">
         <%--                일반 리스트--%>
         <ul class="list-unstyled components">
             <div style="display: flex; align-items: center; width: 200px;">
                 <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">일반 게시판</h5>
                 <button class="showBoardForm" style="margin-left: 10px;">추가</button>
-
             </div>
             <%--            게시판 폼--%>
             <form class="boardForm" style="display: none;"><br>
@@ -89,11 +102,12 @@
 
             <div style="height: 10px;"></div>
             <c:forEach items="${guestBoards}" var="board">
-                <div style="display: flex; align-items: center; width: 200px;">
+                <div style="display: flex; align-items: center; width: 600px;">
                     <li><a href="/${board.role}?id=${board.id}"
                            style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
 
                     <button class="showBoardForm" style="margin-left: 10px;">추가</button>
+                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
                 </div>
                 <%--            게시판 폼--%>
                 <form class="boardForm" style="display: none; margin-left: 10px;"><br>
@@ -118,16 +132,16 @@
 
             <div style="height: 10px;"></div>
             <c:forEach items="${memberBoards}" var="board">
-                <div style="display: flex; align-items: center; width: 200px;">
+                <div style="display: flex; align-items: center; width: 600px;">
                     <li><a href="/${board.role}?id=${board.id}"
                            style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
                     <button class="showBoardForm" style="margin-left: 10px;">추가</button>
+                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
                 </div>
 
                 <%--                게시판 폼--%>
                 <form class="boardForm" style="display: none;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    <button class="boardButton" data-board-id="${board.id}">전송
                     </button>
                 </form>
                 <div style="height: 10px;"></div>
@@ -135,7 +149,6 @@
             </c:forEach><br><br>
 
             <%--            관리자 게시판--%>
-<%--            <c:forEach items="${pageContext.request.userPrincipal.authorities}" var="authority">--%>
                 <div style="display: flex; align-items: center; width: 200px;">
                     <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">관리자 게시판</h5>
                     <button class="showBoardForm" style="margin-left: 10px;" data-role-id="ROLE_ADMIN">추가</button>
@@ -150,10 +163,11 @@
 
                 <div style="height: 10px;"></div>
                 <c:forEach items="${adminBoards}" var="board">
-                    <div style="display: flex; align-items: center; width: 200px;">
+                    <div style="display: flex; align-items: center; width: 600px;">
                         <li><a href="/${board.role}?id=${board.id}"
                                style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
                         <button class="showBoardForm" style="margin-left: 10px;">추가</button>
+                        <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
                     </div>
 
                     <%--                게시판 폼--%>
@@ -181,6 +195,7 @@
     var boardForms = document.querySelectorAll('.boardForm'); // 게시글 작성 폼
     var boardButtons = document.querySelectorAll('.boardButton'); // 게시판 추가 전송 버튼
     var boardTexts = document.querySelectorAll('.boardText'); // 게시판 제목
+    var deleteBoards = document.querySelectorAll('.deleteBoard'); // 게시판 삭제
 
     /** 게시판 추가 버튼 클릭 시 - 제목 입력 폼 생성 */
     showBoardForms.forEach(function (button, index) {
@@ -211,6 +226,29 @@
                     "role": role
                 },
                 success: function (data) {
+                    location.reload();
+                },
+                error: function () {
+                    location.reload();
+                },
+                complete: function () {
+                    // 요청이 완료되면 항상 새로고침
+                    location.reload();
+                }
+            });
+        });
+    });
+
+    /** 게시판 삭제 버튼 클릭 시 */
+    deleteBoards.forEach(function (button, index) {
+        button.addEventListener('click', function () {
+            var boardId = this.getAttribute('data-board-id'); // 게시판 아이디 가져오기
+            var role = this.getAttribute('data-board-role'); // 게시판 아이디 가져오기
+            $.ajax({
+                url: '/ROLE_ADMIN/board/delete?boardId=' + boardId,
+                type: 'POST',
+                success: function (data) {
+                    location.reload();
                 },
                 error: function () {
                 },
@@ -221,7 +259,6 @@
             });
         });
     });
-
 
 </script>
 </html>

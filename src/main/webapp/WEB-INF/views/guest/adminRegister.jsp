@@ -189,27 +189,15 @@
 
         /** 유효성 문제 없을 시 폼에 submit */
         if (verifyCheck) {
-            console.log("verifyCheck is okay")
-            console.log("uploadButton is clicked...")
-
-            var email = $("#email").val();
-            var pw = $("#pw").val();
-            var name = $("#name").val();
-            var gender = document.querySelector('input[name="gender"]:checked').value;
-            var address = $("#address").val();
-            var phone = $("#phone").val();
-            var birth = $("#birth").val();
-            var imageInput = $("#imageInput")[0].files[0];
-
             var formData = new FormData();
-            formData.append("email", email);
-            formData.append("pw", pw);
-            formData.append("name", name);
-            formData.append("gender", gender);
-            formData.append("address", address);
-            formData.append("phone", phone);
-            formData.append("birth", birth);
-            formData.append("image", imageInput);
+            formData.append("email", $("#email").val());
+            formData.append("pw", $("#pw").val());
+            formData.append("name", $("#name").val());
+            formData.append("gender", document.querySelector('input[name="gender"]:checked').value);
+            formData.append("address", $("#address").val());
+            formData.append("phone", $("#phone").val());
+            formData.append("birth_string", $("#birth").val());
+            formData.append("image", $("#imageInput")[0].files[0]);
 
             $.ajax({
                 type: "POST",

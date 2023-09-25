@@ -59,7 +59,6 @@
         }
 
         if (tempCheck) { // 임시 비밀번호 체크까지 완료했다면
-            console.log("tempCheck is okay")
             $.ajax({
                 type: "POST",
                 url: "/guest/updatePw", // 비밀번호 변경 URL

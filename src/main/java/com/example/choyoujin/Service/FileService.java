@@ -166,4 +166,9 @@ public class FileService {
     public void deleteCommentById(int id) {
         fileDao.deleteCommentById(id);
     }
+
+    /** null 사진 저장하기 */
+    public void saveNullImage() {
+        fileDao.saveNullImage();
+    }
 }

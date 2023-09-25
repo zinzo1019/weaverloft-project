@@ -18,4 +18,6 @@ public interface BoardDao {
     void saveChildBoard(BoardDto boardDto);
 
     List<BoardDto> findAll(String role);
+
+    void deleteByBoardId(Integer boardId);
 }

@@ -19,4 +19,6 @@ public interface FileDao {
     void deleteFileById(int id); // 아이디로 파일 삭제
 
     void deleteCommentById(int id); // 아이디로 댓글 삭제
+
+    void saveNullImage(); // null 이미지 저장하기
 }

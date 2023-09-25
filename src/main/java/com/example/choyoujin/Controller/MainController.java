@@ -21,6 +21,11 @@ public class MainController {
     @Autowired
     BoardService boardService;
 
+    @GetMapping({"/", "/main"})
+    public String redirect() {
+        return "redirect:/ROLE_GUEST";
+    }
+
     /**
      * 메인 페이지
      */

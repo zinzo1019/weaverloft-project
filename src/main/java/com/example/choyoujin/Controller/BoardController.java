@@ -27,4 +27,16 @@ public class BoardController {
         }
     }
 
+    /** 게시판 삭제 */
+    @PostMapping("/board/delete")
+    public void saveBoard(@RequestParam(name = "boardId", required = false) Integer boardId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
+        try {
+            // 게시판 삭제하기
+            boardService.deleteByBoardId(boardId);
+        } catch (Exception e) {
+            System.out.println("게시판 삭제를 실패했습니다: " + boardId);
+        }
+    }
+
 }

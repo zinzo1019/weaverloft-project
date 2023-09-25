@@ -80,6 +80,11 @@ dependencies {
 
     // Scheduler
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+    // AOP error
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation group: 'org.apache.commons', name: 'commons-lang3'
+
 }
 
 tasks.named('test') {

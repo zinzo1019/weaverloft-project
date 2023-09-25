@@ -47,9 +47,6 @@ public class MailService {
         mailMessage.setTo(toEmail);
         mailMessage.setSubject("임시 비밀번호");
         mailMessage.setText("비밀번호: " + verifyCode);
-
-        System.out.println("email is " + toEmail );
-
         javaMailSender.send(mailMessage);
     }
 

@@ -40,10 +40,6 @@ public class FindController {
         try {
             // 같은 전화번호를 가진 사용자의 데이터 가져오기
             Map<String, Object> userByPhone = userService.findUserByPhone(phone);
-
-            System.out.println(userByPhone.get("name"));
-            System.out.println(userByPhone.get("phone"));
-
             if (userByPhone.get("name").equals(name)) { // 이름이 일치한다면
                 return ResponseEntity.ok(new ApiResponse("이메일: " + userByPhone.get("email")));
             } else { // 이름이 일치하지 않는다면

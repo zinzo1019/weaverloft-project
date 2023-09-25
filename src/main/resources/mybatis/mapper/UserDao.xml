@@ -6,78 +6,113 @@
 <mapper namespace="com.example.choyoujin.DAO.UserDao">
 
     <select id="list" resultType="com.example.choyoujin.DTO.UserDto">
-        select email, name from tb_user
+        select email, name
+        from tb_user
     </select>
 
-<!--    이메일로 사용자 정보 찾기-->
+    <!--    이메일로 사용자 정보 찾기-->
     <select id="findUserByEmail" resultType="com.example.choyoujin.DTO.UserDto">
-        select * from tb_user u
-        left join image i
-        on u.image_id = i.id
+        select *
+        from tb_user u
+                 left join image i
+                           on u.image_id = i.id
         where u.email = #{email}
     </select>
 
-<!--    전화번호로 사용자 정보 찾기-->
+    <!--    전화번호로 사용자 정보 찾기-->
     <select id="findUserByPhone" resultType="Map">
-        select * from tb_user
+        select *
+        from tb_user
         where phone = #{phone}
     </select>
 
-<!--    회원가입-->
+    <!--    회원가입-->
     <insert id="saveUser">
         insert into tb_user (email, name, pw, address, birth, gender, phone, role, enabled, image_id, create_date)
-        values (
-                   #{userDto.email},
-                   #{userDto.name},
-                   #{userDto.pw},
-                   #{userDto.address},
-                   #{userDto.birth},
-                   #{userDto.gender},
-                   #{userDto.phone},
-                   #{role},
-                   #{enabled},
-                   #{imageId},
-                   #{userDto.createDate}
-               )
+        values (#{userDto.email},
+                #{userDto.name},
+                #{userDto.pw},
+                #{userDto.address},
+                #{userDto.birth},
+                #{userDto.gender},
+                #{userDto.phone},
+                #{role},
+                #{enabled},
+                #{imageId},
+                #{userDto.createDate})
     </insert>
 
     <!--    사용자 정보 수정 (이미지 제외)-->
     <update id="updateUser" parameterType="com.example.choyoujin.DTO.UserDto">
         update tb_user
-        set name = #{name}, address = #{address}, birth = #{birth}, gender = #{gender}, phone = #{phone}
+        set name    = #{name},
+            address = #{address},
+            birth   = #{birth},
+            gender  = #{gender},
+            phone   = #{phone}
         where email = #{email}
     </update>
 
-<!--    사용자 이미지 수정-->
+    <!--    사용자 이미지 수정-->
     <update id="updateImage" parameterType="com.example.choyoujin.DTO.ImageDto">
         update image
-        set name = #{name}, pic_byte = #{picByte}, type = #{type}
+        set name     = #{name},
+            pic_byte = #{picByte},
+            type     = #{type}
         where id = #{id}
     </update>
 
-<!--    비밀번호 수정-->
+    <!--    비밀번호 수정-->
     <update id="updatePw" parameterType="com.example.choyoujin.DTO.UserDto">
-        update tb_user set pw = #{pw}
+        update tb_user
+        set pw = #{pw}
         where email = #{email}
     </update>
 
-<!--    한 달 회원가입자 수-->
+    <!--    한 달 회원가입자 수-->
     <select id="countSignUpByMonth" resultType="_int">
-        SELECT COUNT(*) FROM tb_user
+        SELECT COUNT(*)
+        FROM tb_user
         WHERE create_date BETWEEN #{startDate} AND #{endDate}
     </select>
 
-<!--    한 달 로그인자 수-->
+    <!--    한 달 로그인자 수-->
     <select id="countSignInByMonth" resultType="_int">
         SELECT COUNT(DISTINCT tb_user_id) AS loginUserCount
         FROM login_log
         WHERE login_date BETWEEN #{startDate} AND #{endDate}
     </select>
 
-<!--    모든 사용자 리스트 가져오기-->
+    <!--    모든 사용자 리스트 가져오기-->
     <select id="findAllUsers" resultType="com.example.choyoujin.DTO.UserDto">
         SELECT *
         FROM tb_user
     </select>
+
+    <!--    가장 최근 이미지 아이디 가져오기-->
+    <select id="findLastImageId" resultType="_int">
+        SELECT max(image_id)
+        FROM tb_user
+    </select>
+
+    <select id="findDormantUsers" resultType="String">
+        SELECT email
+        FROM tb_user
+        WHERE last_activity_date &lt;= #{dormantThresholdDate}
+    </select>
+
+    <!--    휴면 계정 처리-->
+    <update id="updateEnabled" parameterType="String">
+        update tb_user
+        set enabled= 0
+        where email = #{email}
+    </update>
+
+    <!--    마지막 사용 날짜 업데이트-->
+    <update id="updateUserLastActivityDate">
+        update tb_user
+        set last_activity_date = #{lastActivityDate}
+        where email = #{email}
+    </update>
 
 </mapper>

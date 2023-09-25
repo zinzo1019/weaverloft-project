@@ -33,8 +33,9 @@
             </form>
             <div class="text-end">
                 <c:if test="${not empty pageContext.request.userPrincipal}">
-                    <p><a href="/ROLE_ADMIN/myPage">
-                        <span id="userNameDisplay"></span></a>님, 환영합니다! </p>
+                    <p><a href="/${user.role}/myPage">
+<%--                        <span id="userNameDisplay"></span></a>님, 환영합니다! </p>--%>
+                        <span>${user.name}</span></a>님, 환영합니다! </p>
                     <div class="admin-page"></div>
                     <a href="/logout" class="btn btn-outline-dark btn-sm ms-2">로그아웃</a>
                 </c:if>

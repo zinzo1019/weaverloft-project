@@ -14,10 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 import static com.example.choyoujin.Service.FileService.decompressBytes;
 
 @Controller
-@RequestMapping("/ROLE_ADMIN")
 public class UserController {
 
     @Autowired
@@ -27,35 +28,35 @@ public class UserController {
     @Autowired
     private BoardService boardService;
 
-    @GetMapping("/session")
+    /** 사용자 정보 가져오기 */
+    @GetMapping("/ROLE_ADMIN/session")
     @ResponseBody
     public UserDto session() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = ((UserDetails) principal).getUsername(); // 사용자 이메일
         UserDto userDto = userService.findUserByEmail(email); // 이메일로 사용자 찾기
-        System.out.println(userDto);
         return userDto;
     }
 
     /** 마이 페이지 */
-    @GetMapping("/myPage")
+    @GetMapping("/{role}/myPage")
     public String myPage(Model model) {
         // 사용자 정보
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = ((UserDetails) principal).getUsername();
-
         UserDto userDto = userService.findUserByEmail(email); // 이메일로 사용자 찾기
-        String encoding = decompressBytes(userDto.getPicByte()); // 이미지 압축 풀기
+
+        if (userDto.getType() != null) { // 이미지가 있다면
+            String encoding = decompressBytes(userDto.getPicByte()); // 이미지 압축 풀기
+            model.addAttribute("encoding", encoding);
+        }
         model.addAttribute("userDto", userDto);
-        model.addAttribute("encoding", encoding);
         return "user/myPage";
     }
 
     /** 마이 페이지 수정 */
-    @PostMapping("/updateUser")
+    @PostMapping("/{role}/updateUser")
     public ResponseEntity<ApiResponse> updateUser(UserDto userDto) {
-        System.out.println(userDto);
-
         try {
             userService.updateUser(userDto);
             return ResponseEntity.ok(new ApiResponse("수정했습니다."));
@@ -72,7 +73,7 @@ public class UserController {
     }
 
     /** 게시판 관리 페이지 */
-    @GetMapping(value = "/board")
+    @GetMapping(value = "/ROLE_ADMIN/board")
     public String manageBoardPage(Model model) {
         // 게시판 정보 가져오기
         boardService.getAllBoardList(model); // 모델에 게시판 리스트 담기

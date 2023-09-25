@@ -80,4 +80,9 @@ public class BoardService {
         boardDto.setRole(parentBoard.getRole()); // 부모 게시판의 권한
         boardDao.saveChildBoard(boardDto);
     }
+
+    /** 게시판 아이디로 게시판 삭제하기 */
+    public void deleteByBoardId(Integer boardId) {
+        boardDao.deleteByBoardId(boardId);
+    }
 }

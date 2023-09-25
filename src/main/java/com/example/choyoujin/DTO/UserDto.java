@@ -23,7 +23,7 @@ public class UserDto {
     private MultipartFile image;
     private String role;
     private LocalDate createDate;
-
+    private Date lastActivityDate; // 마지막으로 활동한 날짜
     private String birth_string;
 
 //    다른 로직 변수
