@@ -102,7 +102,7 @@ public class PostServiceImpl implements PostService {
     @Override public void saveImagesByPostId(PostDto postDto, int postId) throws IOException {
         // 이미 저장된 이미지 리스트 가져오기
         List<String> imageNames = new ArrayList<>();
-        List<ImageDto> imageDtos = postDao.findAllImagesByPostId(postDto.getId());
+        List<ImageDto> imageDtos = postDao.findAllImagesByPostId(postId);
         for (ImageDto dto : imageDtos) {
             imageNames.add(dto.getName());
         }
