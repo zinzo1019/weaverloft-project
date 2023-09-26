@@ -1,4 +1,4 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
 import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DAO.PostDao;
@@ -54,13 +54,18 @@ public class PostController {
      * 게시글 댓글 작성하기
      */
     @PostMapping("/{role}/comment")
-    public ResponseEntity<ApiResponse> saveComments(CommentDto commentDto, HttpServletRequest request) {
-        int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
-        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
-        commentDto.setPostId(postId);
-        commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅
-        commentService.saveComment(commentDto); // 댓글 저장
-        return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
+    public ResponseEntity<ApiResponse> saveComments(CommentDto commentDto, HttpServletRequest request) throws Exception {
+        try {
+            int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
+            System.out.println("postId is " + postId);
+            String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
+            commentDto.setPostId(postId);
+            commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅
+            commentService.saveComment(commentDto); // 댓글 저장
+            return ResponseEntity.ok(new ApiResponse("댓글을 저장했습니다."));
+        } catch (Exception e) {
+            throw new Exception("댓글 저장에 실패했습니다.");
+        }
     }
 
     /**
@@ -78,7 +83,7 @@ public class PostController {
     /**
      * 게시글 작성 페이지
      */
-    @RequestMapping("/{role}/writeForm")
+    @GetMapping("/{role}/writeForm")
     public String writeForm(@PathVariable("role") String role, @RequestParam("id") int id, Model model) {
         model.addAttribute("role", role);
         model.addAttribute("id", id);
@@ -89,13 +94,17 @@ public class PostController {
      * 게시글 저장
      */
     @RequestMapping("/{role}/write")
-    public ResponseEntity<Integer> write(@PathVariable("role") String role, @RequestParam("id") int id, PostDto postDto) throws IOException {
+    public ResponseEntity<Integer> write(@PathVariable("role") String role, @RequestParam("id") int id, PostDto postDto) throws Exception {
+        try {
         PostDto setPostDto = postService.setPostDtoForSave(id, role, postDto); // 게시판 아이디 & 사용자 정보 & 현재 날짜로 set
         postDao.writeDao(setPostDto);// 게시글 저장하기
         int postId = postService.findMaxPostId();// 게시글 아이디 가져오기
         postService.saveImagesByPostId(postDto, postId); // 이미지 리스트 저장하기
         postService.saveFilesByPostId(postDto, postId); // 파일 리스트 저장하기
         return ResponseEntity.ok(postId); // 게시글 아이디로 응답
+        } catch (Exception e) {
+            throw new Exception("게시글 저장에 실패했습니다.");
+        }
     }
 
     /**

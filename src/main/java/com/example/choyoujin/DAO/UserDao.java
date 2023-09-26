@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Mapper // 다음 인터페이스의 구현을 xml로 할 것이다
 public interface UserDao {
@@ -16,7 +15,7 @@ public interface UserDao {
     UserDto findUserByEmail(String email);
     void saveUser(UserDto userDto, String role, int enabled, int imageId);
     void updatePw(UserDto userDto);
-    Map<String, Object> findUserByPhone(String phone);
+    UserDto findUserByPhone(String phone);
     void updateUser(UserDto userDto);
 
     void updateImage(ImageDto image);

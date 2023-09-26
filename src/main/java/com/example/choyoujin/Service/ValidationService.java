@@ -65,7 +65,7 @@ public class ValidationService {
             return phone.substring(0, 3) + "-" + phone.substring(3, 7) + "-" + phone.substring(7);
         } else {
             // 그 외의 경우는 그대로 반환
-            System.out.println("전화번호는 11자리여야 합니다.");
+            System.out.println("전화번호는 하이픈을 포함하여 13자리여야 합니다.");
             return null;
         }
     }

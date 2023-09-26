@@ -1,4 +1,4 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

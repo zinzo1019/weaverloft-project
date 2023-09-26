@@ -1,4 +1,4 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
 import com.example.choyoujin.DTO.*;
 import com.example.choyoujin.Service.BoardService;

@@ -1,4 +1,4 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
 import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DAO.UserDao;
@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 import static com.example.choyoujin.Service.FileService.decompressBytes;
 
@@ -66,11 +64,11 @@ public class UserController {
     }
 
     /** 사용자 리스트 페이지 */
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String userListPage(Model model) {
-        model.addAttribute("users", userDao.list());
-        return "admin/userlist";
-    }
+//    @RequestMapping(value = "/user", method = RequestMethod.GET)
+//    public String userListPage(Model model) {
+//        model.addAttribute("users", userDao.list());
+//        return "admin/userlist";
+//    }
 
     /** 게시판 관리 페이지 */
     @GetMapping(value = "/ROLE_ADMIN/board")

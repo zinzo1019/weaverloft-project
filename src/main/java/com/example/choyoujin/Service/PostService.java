@@ -4,13 +4,14 @@ import com.example.choyoujin.DTO.FileDto;
 import com.example.choyoujin.DTO.ImageDto;
 import com.example.choyoujin.DTO.PostDto;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
     void deletePostById(String id);
+
+    PostDto viewDao(int id);
 
     Page<PostDto> findAllByBoardId(int boardId, int page, int size);
 
@@ -22,7 +23,6 @@ public interface PostService {
 
     /** 페이징 처리 */
     Page<PostDto> findPostsByPage(int page, int size);
-
 
     void saveImages(ImageDto imageDto);
 
@@ -47,4 +47,6 @@ public interface PostService {
     int countByRole(String role);
     int countByKeywordByGuest(String keyword);
     int countByKeywordByBoardId(int boardId, String keyword);
+    boolean isWriter(int postId);
+    List<PostDto> findAllByBoardIdWithNotPaging(int boardId);
 }

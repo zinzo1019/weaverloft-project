@@ -7,16 +7,16 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @Aspect
 public class AopConfig {
 
     @Autowired
     private ErrorLogDao errorLogDao;
-    @AfterThrowing(pointcut = "execution(* com.example.*.*.*(..))", throwing = "ex")
-    public void logError(JoinPoint joinPoint, Exception ex) {
+    @AfterThrowing(pointcut = "execution(* com.example.choyoujin.controller.ModifyController.*(..))", throwing = "ex")
+    public void logError(JoinPoint joinPoint, Exception ex) throws Exception {
         // 오류 메시지와 스택 트레이스를 가져와서 로그에 저장
         String errorMessage = ex.getMessage();
         String stackTrace = ExceptionUtils.getStackTrace(ex);
@@ -27,5 +27,10 @@ public class AopConfig {
         errorLog.setErrorMessage(errorMessage);
         errorLog.setStackTrace(stackTrace);
         errorLogDao.insertErrorLog(errorLog);
+
+        System.out.println("메서드 실행 중 예외 발생: " + joinPoint.getSignature().toShortString());
+        System.out.println("errorMessage: " + errorMessage);
+        System.out.println("stackTrace: " + stackTrace);
+        throw ex;
     }
 }

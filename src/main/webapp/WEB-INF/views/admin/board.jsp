@@ -94,22 +94,26 @@
                 <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">일반 게시판</h5>
                 <button class="showBoardForm" style="margin-left: 10px;">추가</button>
             </div>
-            <%--            게시판 폼--%>
+            <%--            일반 게시판 - 부모--%>
             <form class="boardForm" style="display: none;"><br>
                 <input type="text" class="boardText" placeholder="게시판 이름">
                 <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_GUEST">전송</button>
             </form>
 
+            <%--            일반 게시판 자식--%>
             <div style="height: 10px;"></div>
             <c:forEach items="${guestBoards}" var="board">
                 <div style="display: flex; align-items: center; width: 600px;">
                     <li><a href="/${board.role}?id=${board.id}"
-                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
-
+                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                    </li>
                     <button class="showBoardForm" style="margin-left: 10px;">추가</button>
-                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
+                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN"
+                            data-board-id="${board.id}">삭제
+                    </button>
                 </div>
-                <%--            게시판 폼--%>
+
+                <%--                일반 게시판 자식 생성--%>
                 <form class="boardForm" style="display: none; margin-left: 10px;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
                     <button class="boardButton" data-board-id="${board.id}">전송
@@ -122,61 +126,66 @@
             <div style="display: flex; align-items: center; width: 200px;">
                 <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">사용자 게시판</h5>
                 <button class="showBoardForm" style="margin-left: 10px;">추가</button>
-
             </div>
-            <%--            게시판 폼--%>
+            <%--            사용자 게시판 부모--%>
             <form class="boardForm" style="display: none;"><br>
                 <input type="text" class="boardText" placeholder="게시판 이름">
                 <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_USER">전송</button>
             </form>
-
             <div style="height: 10px;"></div>
+
+            <%--            사용자 게시판 자식--%>
             <c:forEach items="${memberBoards}" var="board">
                 <div style="display: flex; align-items: center; width: 600px;">
                     <li><a href="/${board.role}?id=${board.id}"
-                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
+                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                    </li>
                     <button class="showBoardForm" style="margin-left: 10px;">추가</button>
-                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
+                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN"
+                            data-board-id="${board.id}">삭제
+                    </button>
                 </div>
 
                 <%--                게시판 폼--%>
-                <form class="boardForm" style="display: none;"><br>
+                <form class="boardForm" style="display: none; margin-left: 10px;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    </button>
+                    <button class="boardButton" data-board-id="${board.id}">전송</button>
                 </form>
                 <div style="height: 10px;"></div>
-
             </c:forEach><br><br>
 
             <%--            관리자 게시판--%>
-                <div style="display: flex; align-items: center; width: 200px;">
-                    <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">관리자 게시판</h5>
-                    <button class="showBoardForm" style="margin-left: 10px;" data-role-id="ROLE_ADMIN">추가</button>
+            <div style="display: flex; align-items: center; width: 200px;">
+                <h5 style="font-size: 20px; font-weight: bold; color: #193990; flex: 1;">관리자 게시판</h5>
+                <button class="showBoardForm" style="margin-left: 10px;" data-role-id="ROLE_ADMIN">추가</button>
+            </div>
+
+            <%--                관리자 게시판 부모--%>
+            <form class="boardForm" style="display: none;"><br>
+                <input type="text" class="boardText" placeholder="게시판 이름">
+                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_ADMIN">전송</button>
+            </form>
+            <div style="height: 10px;"></div>
+
+            <%--            관리자 게시판 자식--%>
+            <c:forEach items="${adminBoards}" var="board">
+                <div style="display: flex; align-items: center; width: 600px;">
+                    <li><a href="/${board.role}?id=${board.id}"
+                           style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a>
+                    </li>
+                    <button class="showBoardForm" style="margin-left: 10px;">추가</button>
+                    <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN"
+                            data-board-id="${board.id}">삭제
+                    </button>
                 </div>
 
-                <%--                게시판 폼--%>
+                <%--                관리자 게시판 자식 생성--%>
                 <form class="boardForm" style="display: none;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_ADMIN">전송
+                    <button class="boardButton" data-board-id="${board.id}">전송
                     </button>
                 </form>
-
                 <div style="height: 10px;"></div>
-                <c:forEach items="${adminBoards}" var="board">
-                    <div style="display: flex; align-items: center; width: 600px;">
-                        <li><a href="/${board.role}?id=${board.id}"
-                               style="font-size: 16px; font-weight: bold; color: #000; padding-left: ${(board.level -1) * 10}px;"> ${board.name} </a></li>
-                        <button class="showBoardForm" style="margin-left: 10px;">추가</button>
-                        <button class="deleteBoard" style="margin-left: 10px;" data-role-id="ROLE_ADMIN" data-board-id="${board.id}">삭제</button>
-                    </div>
-
-                    <%--                게시판 폼--%>
-                    <form class="boardForm" style="display: none;"><br>
-                        <input type="text" class="boardText" placeholder="게시판 이름">
-                        <button class="boardButton" data-board-id="${board.id}">전송
-                        </button>
-                    </form>
-                    <div style="height: 10px;"></div>
 
             </c:forEach>
         </ul>
@@ -239,26 +248,52 @@
         });
     });
 
-    /** 게시판 삭제 버튼 클릭 시 */
     deleteBoards.forEach(function (button, index) {
         button.addEventListener('click', function () {
             var boardId = this.getAttribute('data-board-id'); // 게시판 아이디 가져오기
-            var role = this.getAttribute('data-board-role'); // 게시판 아이디 가져오기
             $.ajax({
-                url: '/ROLE_ADMIN/board/delete?boardId=' + boardId,
-                type: 'POST',
-                success: function (data) {
-                    location.reload();
+                url: '/ROLE_ADMIN/isPost?boardId=' + boardId,
+                type: 'GET',
+                success: function (data) { // 게시물 없음
+                    alert("게시판을 삭제합니다.");
+                    $.ajax({
+                        url: '/ROLE_ADMIN/board/delete?boardId=' + boardId,
+                        type: 'POST',
+                        success: function (data) {
+                            location.reload();
+                        },
+                        error: function () {
+                        },
+                        complete: function () {
+                            // 요청이 완료되면 항상 새로고침
+                            location.reload();
+                        }
+                    });
                 },
-                error: function () {
-                },
-                complete: function () {
-                    // 요청이 완료되면 항상 새로고침
-                    location.reload();
+                error: function () { // 게시물 있음
+                    var result = confirm("게시글이 있습니다. 정말로 삭제하시겠습니까?");
+                    if (result) { // 확인
+                        alert("게시판을 삭제합니다.");
+                        $.ajax({
+                            url: '/ROLE_ADMIN/board/delete?boardId=' + boardId,
+                            type: 'POST',
+                            success: function (data) {
+                                location.reload();
+                            },
+                            error: function () {
+                            },
+                            complete: function () {
+                                // 요청이 완료되면 항상 새로고침
+                                location.reload();
+                            }
+                        });
+                    } else { // 취소
+                        alert("삭제가 취소되었습니다.");
+                    }
                 }
             });
         });
-    });
+    })
 
 </script>
 </html>

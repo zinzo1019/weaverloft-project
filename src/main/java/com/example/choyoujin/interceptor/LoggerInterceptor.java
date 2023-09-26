@@ -11,13 +11,12 @@ public class LoggerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(); // 세션 가져오기
-//        System.out.println(session);
         if (session != null) {
             long sessionCreationTime = session.getCreationTime(); // 세션 생성 시간
             long currentTime = System.currentTimeMillis(); // 현재 시간 (밀리초)
 
-            // 세션 만료 시간을 30분으로 설정 (30분 = 30 * 60 * 1000 밀리초)
-            long sessionTimeoutMillis = 30 * 60 * 1000;
+            // 세션 만료 시간을 30분
+            long sessionTimeoutMillis = 30 * 60 * 10000;
 
 //            System.out.println("세션 생성 시간: " + sessionCreationTime);
 //            System.out.println("현재 시간: " + currentTime);

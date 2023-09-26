@@ -20,4 +20,6 @@ public interface BoardDao {
     List<BoardDto> findAll(String role);
 
     void deleteByBoardId(Integer boardId);
+
+    void deletePostsByBoardId(Integer boardId);
 }

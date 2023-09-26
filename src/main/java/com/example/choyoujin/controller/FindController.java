@@ -1,6 +1,7 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
 import com.example.choyoujin.ApiResponse;
+import com.example.choyoujin.DTO.UserDto;
 import com.example.choyoujin.Service.FileService;
 import com.example.choyoujin.Service.MailService;
 import com.example.choyoujin.Service.UserService;
@@ -36,12 +37,11 @@ public class FindController {
     public ResponseEntity<ApiResponse> findEmail(@RequestParam Map<String, String> userData) {
         String name = userData.get("name");
         String phone = userData.get("phone");
-
         try {
             // 같은 전화번호를 가진 사용자의 데이터 가져오기
-            Map<String, Object> userByPhone = userService.findUserByPhone(phone);
-            if (userByPhone.get("name").equals(name)) { // 이름이 일치한다면
-                return ResponseEntity.ok(new ApiResponse("이메일: " + userByPhone.get("email")));
+            UserDto userDto = userService.findUserByPhone(phone);
+            if (userDto.getName().equals(name)) { // 이름이 일치한다면
+                return ResponseEntity.ok(new ApiResponse("이메일: " + userDto.getEmail()));
             } else { // 이름이 일치하지 않는다면
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("이름 또는 핸드폰 번호가 맞지 않습니다. 다시 확인해주세요."));
             }

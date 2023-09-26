@@ -4,6 +4,7 @@ import com.example.choyoujin.DTO.UserDto;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import org.apache.poi.ss.usermodel.*;
@@ -79,11 +80,16 @@ public class ExcelService {
         for (int i = 0; i < userDtos.size(); i++) {
             UserDto userDto = userDtos.get(i);
             Row row = sheet.createRow(rowNum);
+
+            // birth를 문자열로 변환
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedBirth = userDto.getBirth().format(formatter);
+
             row.createCell(0).setCellValue(userDto.getEmail());
             row.createCell(1).setCellValue(maskName(userDto.getName()));
             row.createCell(2).setCellValue(maskPhoneNumber(userDto.getPhone()));
             row.createCell(3).setCellValue(userDto.getAddress());
-            row.createCell(4).setCellValue(userDto.getBirth());
+            row.createCell(4).setCellValue(formattedBirth);
             row.createCell(5).setCellValue(userDto.getGender());
 
             String createDate = String.valueOf(userDto.getCreateDate());
@@ -151,16 +157,17 @@ public class ExcelService {
     /** 전화번호 마스킹 */
     private static String maskPhoneNumber(String phone) {
         if (phone != null && phone.length() >= 10) {
-            int maskLength = phone.length() - 4; // 마지막 4자리만 표시, 나머지는 마스킹
-            StringBuilder maskedPhone = new StringBuilder();
+            int maskStartIndex = 3; // 마스킹 시작 인덱스 (0부터 시작)
+            int maskEndIndex = phone.length() - 4; // 마스킹 종료 인덱스 (0부터 시작)
 
-            // "010"까지는 그대로 유지
-            maskedPhone.append(phone.substring(0, 3));
-            for (int i = 0; i < maskLength; i++) {
-                maskedPhone.append('*'); // 마스킹 처리
+            StringBuilder maskedPhone = new StringBuilder();
+            for (int i = 0; i < phone.length(); i++) {
+                if (i >= maskStartIndex && i < maskEndIndex) {
+                    maskedPhone.append('*'); // 마스킹 처리
+                } else {
+                    maskedPhone.append(phone.charAt(i)); // 숫자는 그대로 유지
+                }
             }
-            // 마지막 4자리는 그대로 유지
-            maskedPhone.append(phone.substring(maskLength + 3));
             return maskedPhone.toString();
         } else {
             return phone; // 전화번호가 null이거나 10자리 미만인 경우, 그대로 반환

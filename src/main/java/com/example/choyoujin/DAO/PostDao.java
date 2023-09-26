@@ -26,7 +26,7 @@ public interface PostDao {
 
     void saveImages(ImageDto imageDto);
 
-    List<ImageDto> findAllByPostId(@Param("postId") int postId);
+    List<ImageDto> findAllImagesByPostId(@Param("postId") int postId);
 
     int findMaxPostId();
 
@@ -47,4 +47,8 @@ public interface PostDao {
     int countByKeywordByBoardId(int boardId, String keyword);
 
     void modifyPost(PostDto postDto);
+
+    List<PostDto> findAllByBoardIdWithNotPaging(int boardId);
+
+//    List<PostDto> findAllByBoardId(int boardId); // 게시판 아이디로 게시글 리스트 가져오기
 }

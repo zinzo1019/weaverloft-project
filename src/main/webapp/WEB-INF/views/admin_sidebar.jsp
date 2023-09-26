@@ -8,22 +8,25 @@
     <div class="p-4">
         <h5 style="font-size: 20px; font-weight: bold; color: #000;">메뉴</h5>
         <ul class="list-unstyled components">
-            <li>
+            <li style="margin-bottom: 10px;">
                 <a href="/ROLE_GUEST" style="font-size: 16px; font-weight: bold; color: #000;">
                     <i class="bi bi-house-door"></i> 메인 페이지
                 </a>
             </li>
-            <li>
+            <!-- 간격을 넓히려면 여기에 스타일 추가 -->
+            <li style="margin-bottom: 10px;">
                 <a href="chart" style="font-size: 16px; font-weight: bold; color: #000;">
                     <i class="bi bi-house-door"></i> 달별 회원가입 / 로그인 추이
                 </a>
             </li>
-            <li>
+            <!-- 간격을 넓히려면 여기에 스타일 추가 -->
+            <li style="margin-bottom: 10px;">
                 <a href="board" style="font-size: 16px; font-weight: bold; color: #000;">
                     <i class="bi bi-person"></i> 게시판 관리
                 </a>
             </li>
-            <li>
+            <!-- 간격을 넓히려면 여기에 스타일 추가 -->
+            <li style="margin-bottom: 10px;">
                 <a href="userList" style="font-size: 16px; font-weight: bold; color: #000;">
                     <i class="bi bi-gear"></i> 사용자 리스트
                 </a>

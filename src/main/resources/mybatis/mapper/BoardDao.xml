@@ -94,4 +94,11 @@
         where id = #{boardId}
     </select>
 
+<!--    게시판 아이디로 게시판 삭제하기-->
+    <select id="deletePostsByBoardId">
+        delete
+        from post
+        where board_id = #{boardId}
+    </select>
+
 </mapper>

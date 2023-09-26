@@ -83,6 +83,7 @@ public class BoardService {
 
     /** 게시판 아이디로 게시판 삭제하기 */
     public void deleteByBoardId(Integer boardId) {
-        boardDao.deleteByBoardId(boardId);
+        boardDao.deletePostsByBoardId(boardId); // 게시판 내부 게시글들 삭제하기
+        boardDao.deleteByBoardId(boardId); // 게시판 삭제하기
     }
 }

@@ -39,12 +39,16 @@
                             <label for="images">이미지 업로드</label>
                             <input type="file" class="form-control" name="images" id="images" multiple accept="image/*">
                         </div>
+                        <!-- 이미지 미리보기 영역 -->
+                        <div id="image-preview" class="mb-3"></div>
 
                         <!-- 다중 파일 업로드 필드 -->
                         <div class="mb-3">
                             <label for="files">파일 업로드</label>
                             <input type="file" class="form-control" name="files" id="files" multiple>
                         </div>
+                        <%--            파일 미리보기--%>
+                        <div id="file-list"></div>
                     </form>
 
                     <%--                    다중 이미지--%>
@@ -187,6 +191,7 @@
     $(document).ready(function () {
         $("#modify").click(function () {
             var formData = new FormData($("#form")[0]);
+            debugger;
             $.ajax({
                 type: "POST",
                 url: "/${role}/addFiles?id=${dto.id}",
@@ -252,6 +257,86 @@
             }
         });
     });
+
+    // 이미지 업로드 필드가 변경되었을 때 실행되는 함수
+    document.getElementById('images').addEventListener('change', function () {
+        displayImagePreview(this);
+    });
+
+    function displayImagePreview(input) {
+        var preview = document.getElementById('image-preview');
+        preview.innerHTML = ''; // 미리보기 영역 초기화
+
+        if (input.files && input.files.length > 0) {
+            for (var i = 0; i < input.files.length; i++) { // 업로드 이미지 수만큼 반복
+                var file = input.files[i];
+                if (file.type.match('image.*')) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-image';
+
+                        // 삭제 버튼 생성
+                        var deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'X';
+                        deleteButton.className = 'delete-button';
+
+                        deleteButton.addEventListener('click', function () { // 삭제 버튼 클릭 시
+                            // 이미지 및 삭제 버튼을 포함한 래퍼 요소 삭제
+                            var imageWrapper = this.parentNode;
+                            imageWrapper.parentNode.removeChild(imageWrapper);
+                        });
+
+                        // 이미지와 삭제 버튼을 래퍼 요소에 추가
+                        var imageWrapper = document.createElement('div'); // 이미지와 삭제 버튼을 감싸는 래퍼 요소
+                        imageWrapper.className = 'image-wrapper';
+                        imageWrapper.appendChild(img);
+                        imageWrapper.appendChild(deleteButton);
+
+                        // 래퍼 요소를 미리보기 영역에 추가
+                        preview.appendChild(imageWrapper);
+                    };
+                    reader.readAsDataURL(file); // 이미지를 Data URL로 읽어옴
+                }
+            }
+        }
+    }
+
+    // 파일 업로드 필드가 변경되었을 때 실행되는 함수
+    document.getElementById('files').addEventListener('change', function () {
+        displayFileList(this);
+    });
+
+    function displayFileList(input) {
+        var fileList = document.getElementById('file-list');
+        fileList.innerHTML = ''; // 파일 목록 초기화
+
+        if (input.files && input.files.length > 0) {
+            for (var i = 0; i < input.files.length; i++) {
+                var file = input.files[i];
+                var fileNameDiv = document.createElement('div');
+                fileNameDiv.textContent = file.name;
+
+                // 삭제 버튼 생성
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.className = 'file-delete-button';
+
+                deleteButton.addEventListener('click', function (fileToRemove) {
+                    // 파일 목록에서 해당 파일 이름 삭제
+                    fileList.removeChild(this.parentNode);
+                });
+
+                // 파일 목록에 파일 이름과 삭제 버튼 추가
+                var fileDiv = document.createElement('div');
+                fileDiv.className = 'file-item';
+                fileDiv.appendChild(fileNameDiv);
+                fileDiv.appendChild(deleteButton);
+                fileList.appendChild(fileDiv);
+            }
+        }
+    }
 
 </script>
 </html>

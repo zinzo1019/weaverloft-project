@@ -75,7 +75,7 @@ public class UserService {
     /**
      * 전화번호로 사용자 정보 가져오기
      */
-    public Map<String, Object> findUserByPhone(String phone) {
+    public UserDto findUserByPhone(String phone) {
         return userDao.findUserByPhone(phone);
     }
 

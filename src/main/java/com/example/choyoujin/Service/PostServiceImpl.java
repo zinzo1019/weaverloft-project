@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.example.choyoujin.Service.FileService.compressBytes;
@@ -28,12 +28,14 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostDao postDao;
-    @Autowired
-    private UserService userService;
-
     
     @Override public void deletePostById(String id) {
         postDao.deletePostById(id);
+    }
+
+    @Override
+    public PostDto viewDao(int id) {
+        return postDao.viewDao(id);
     }
 
     @Override public Page<PostDto> findAllByBoardId(int boardId, int page, int size) {
@@ -86,7 +88,7 @@ public class PostServiceImpl implements PostService {
     /** 게시글 아이디로 이미지 리스트 가져오기 */
     @Override public List<ImageDto> getImageDtos(int postId) {
         // 다중 이미지 가져오기
-        List<ImageDto> images = postDao.findAllByPostId(postId); // 게시글 아이디로 다중 이미지 가져오기
+        List<ImageDto> images = postDao.findAllImagesByPostId(postId); // 게시글 아이디로 다중 이미지 가져오기
         List<ImageDto> imageDtos = new ArrayList<>();
 
         for (ImageDto imageDto : images) {
@@ -98,10 +100,20 @@ public class PostServiceImpl implements PostService {
 
     /** 게시글 아이디로 이미지 리스트 저장하기 */
     @Override public void saveImagesByPostId(PostDto postDto, int postId) throws IOException {
+        // 이미 저장된 이미지 리스트 가져오기
+        List<String> imageNames = new ArrayList<>();
+        List<ImageDto> imageDtos = postDao.findAllImagesByPostId(postDto.getId());
+        for (ImageDto dto : imageDtos) {
+            imageNames.add(dto.getName());
+        }
         List<MultipartFile> imgList = postDto.getImages();
         if (!imgList.get(0).getOriginalFilename().equals("")) { // 이미지가 들어와야 아래 로직 수행
             // 다중 이미지 업로드
             for (MultipartFile image : postDto.getImages()) {
+                if (imageNames.contains(image.getOriginalFilename())) { // 이미 있는 이미지라면 저장하지 않음
+                    System.out.println(image.getOriginalFilename() + " 이미지는 이미 저장돼 있습니다.");
+                    continue;
+                }
                 String name = image.getOriginalFilename(); // 파일 이름
                 String type = image.getContentType(); // 파일 타입
                 byte[] picByte = compressBytes(image.getBytes()); // 문자열 압축
@@ -114,11 +126,20 @@ public class PostServiceImpl implements PostService {
 
     /** 게시글 아이디로 파일 리스트 저장하기 */
     @Override public void saveFilesByPostId(PostDto postDto, int postId) throws IOException {
+        // 이미 저장된 파일 리스트 가져오기
+        List<String> fileNames = new ArrayList<>();
+        List<FileDto> fileDtos = postDao.findAllFilesByPostId(postDto.getId());
+        for (FileDto dto : fileDtos) {
+            fileNames.add(dto.getName());
+        }
+
         List<MultipartFile> fileList = postDto.getFiles();
         if (!fileList.get(0).getOriginalFilename().equals("")) { // 파일이 들어와야 아래 로직 수행
-
-            List<String> fileNames = new ArrayList<>();
             for (MultipartFile file : postDto.getFiles()) {
+                if (fileNames.contains(file.getOriginalFilename())) { // 이미 있는 이미지라면 저장하지 않음
+                    System.out.println(file.getOriginalFilename() + " 파일은 이미 저장돼 있습니다.");
+                    continue;
+                }
                 String uploadDir = "C:/weaver_test/"; // 파일 경로
                 String fileName = file.getOriginalFilename(); // 파일 이름
                 String filePath = uploadDir + fileName; // 파일 경로 + 파일 이름
@@ -146,7 +167,6 @@ public class PostServiceImpl implements PostService {
     /** 게시판 아이디와 사용자 이름으로 PostDto 초기화 */
     @Override public PostDto setPostDtoForSave(int id, String role, PostDto postDto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일 가져오기
-//        String userName = userService.findUserByEmail(email).getName(); // 사용자 이름 가져오기
         postDto.setBoardId(id); // 게시판 아이디
         postDto.setEmail(email); // 사용자 아이디
         postDto.setRole(role); // 게시글 권한 부여
@@ -182,5 +202,21 @@ public class PostServiceImpl implements PostService {
 
     public void modifyPost(PostDto postDto) {
         postDao.modifyPost(postDto);
+    }
+
+    /** 게시글 작성자와 로그인한 자의 정보가 일치하는지 확인 */
+    @Override
+    public boolean isWriter(int postId) {
+        String writer = postDao.viewDao(postId).getEmail();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = ((UserDetails) principal).getUsername(); // 사용자 이메일
+        if (writer.equals(email)) return true;
+        else return false;
+    }
+
+    /** 게시판 아이디로 게시글 리스트 가져오기 */
+    @Override
+    public List<PostDto> findAllByBoardIdWithNotPaging(int boardId) {
+        return postDao.findAllByBoardIdWithNotPaging(boardId);
     }
 }

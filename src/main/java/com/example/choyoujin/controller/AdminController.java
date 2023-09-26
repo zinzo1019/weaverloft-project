@@ -1,5 +1,6 @@
-package com.example.choyoujin.Controller;
+package com.example.choyoujin.controller;
 
+import com.example.choyoujin.ApiResponse;
 import com.example.choyoujin.DTO.ChartDto;
 import com.example.choyoujin.DTO.UserDto;
 import com.example.choyoujin.Service.ExcelService;
@@ -118,51 +119,8 @@ public class AdminController {
      * 엑셀 파일 -> 사용자 데이터 저장
      */
     @PostMapping("/upload/user")
-    @ResponseBody
-    public ResponseEntity<String> uploadExcel(@RequestParam("file") MultipartFile file, Model model) throws IOException {
-        InputStream inputStream = file.getInputStream();
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheetAt(0); // 엑셀 파일의 첫 번째 시트를 가져옴
-
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
-
-            // 각 셀에서 데이터 추출
-            String email = row.getCell(0).getStringCellValue();
-            String name = row.getCell(1).getStringCellValue();
-            String pw = row.getCell(2).getStringCellValue();
-            String address = row.getCell(4).getStringCellValue();
-            String gender = row.getCell(6).getStringCellValue();
-
-            // 전화번호와 날짜
-            Cell phoneCell = row.getCell(3), birthCell = row.getCell(5);
-            String phone = null;
-            LocalDate birth = null;
-            phone = validService.isValidPhone(phoneCell);
-            birth = validService.isValidBirth(birthCell, birth);
-
-            try {
-                // 이미 가입된 이메일인지 확인
-                if (validService.isValidEmail(email)) {
-                    // 각 필드의 유효성 검사를 수행 (예: 이메일 형식, 비밀번호 강도 등)
-                    if (validService.isValidName(name) && phone != null && validService.isValidGender(gender) && birth != null) {
-                        UserDto userDto = new UserDto(email, name, gender, pw, birth, address, phone);
-                        int imageId = userService.saveNullImageAndGetImageId(); // null 이미지 저장
-                        userService.saveUser(userDto, "ROLE_USER", 1, imageId + 1); // 사용자 데이터 저장
-                    } else { // 유효성 검사에 통과하지 못했다면
-                        throw new Exception("파일 형식을 다시 확인해주세요.");
-                    }
-                } else {
-                    throw new Exception("이미 가입된 이메일입니다.");
-                }
-            } catch (Exception e) {
-                System.out.println("예외 발생: " + e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-            }
-        }
-        workbook.close();
-        inputStream.close();
-        return ResponseEntity.ok("저장했습니다.");
+    public ResponseEntity<ApiResponse> uploadExcel(@RequestParam("file") MultipartFile file) {
+        return fileService.saveExcelUsersAndReturnResponse(file);
     }
 
 }
