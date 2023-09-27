@@ -63,7 +63,7 @@ public class SignUpController {
         System.out.println("checkIdDuplication() 함수 실행 중...");
         if (userService.isUser(email) == true) {
             System.out.println("이미 사용 중인 아이디입니다.");
-            throw new BadRequestException("이미 사용 중인 아이디입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 아이디입니다.");
         } else {
             System.out.println("사용 가능한 아이디입니다.");
             return ResponseEntity.ok("사용 가능한 아이디 입니다.");

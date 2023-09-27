@@ -25,7 +25,7 @@
     var mailSendCheck = false; // 메일 인증 번호 발송 여부
 
     // 아이디 중복 체크
-    $(document).ready(function () {
+    $(document).ready(function (e) {
         $("#idCheck").click(function () {
             $.ajax({
                 url: "/guest/id/check",
@@ -421,20 +421,20 @@
 
 <script>
     /** 이미지 확장자 제한 */
-    const imageInput = document.getElementById('imageInput');
-    const imageErrorMessage = document.getElementById('imageErrorMessage');
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-
-    imageInput.addEventListener('change', function () {
-        const fileName = this.value;
-        const fileExtension = fileName.split('.').pop().toLowerCase();
-        if (!allowedExtensions.includes('.' + fileExtension)) {
-            imageErrorMessage.textContent = '올바른 이미지 파일을 선택하세요.';
-            this.value = ''; // 파일 선택 취소
-        } else {
-            imageErrorMessage.textContent = '';
-        }
-    });
+    // const imageInput = document.getElementById('imageInput');
+    // const imageErrorMessage = document.getElementById('imageErrorMessage');
+    // const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    //
+    // imageInput.addEventListener('change', function () {
+    //     const fileName = this.value;
+    //     const fileExtension = fileName.split('.').pop().toLowerCase();
+    //     if (!allowedExtensions.includes('.' + fileExtension)) {
+    //         imageErrorMessage.textContent = '올바른 이미지 파일을 선택하세요.';
+    //         this.value = ''; // 파일 선택 취소
+    //     } else {
+    //         imageErrorMessage.textContent = '';
+    //     }
+    // });
 </script>
 
 

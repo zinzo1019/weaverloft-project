@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class MainController {
     @Autowired
@@ -24,6 +26,12 @@ public class MainController {
     @GetMapping({"/", "/main"})
     public String redirect() {
         return "redirect:/ROLE_GUEST";
+    }
+
+    @GetMapping("/ROLE_GUEST/test")
+    public void testController() {
+        List<BoardDto> boardDtoList = boardService.findAllPostsByBoardId(82);
+        System.out.println(boardDtoList);
     }
 
     /**
@@ -39,6 +47,7 @@ public class MainController {
         Pagination pagination = getPagination();
         Page<PostDto> list = null;
 
+        /** 분리하기 */
         if (id == null || id == 0) { // 게시판 선택하기 전 (최근 게시물)
             model.addAttribute("id", 0);
             list = postService.findAllByRole("ROLE_GUEST", page, 5);

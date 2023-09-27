@@ -57,7 +57,6 @@ public class PostController {
     public ResponseEntity<ApiResponse> saveComments(CommentDto commentDto, HttpServletRequest request) throws Exception {
         try {
             int postId = Integer.parseInt(request.getParameter("id")); // 게시글 아이디
-            System.out.println("postId is " + postId);
             String email = SecurityContextHolder.getContext().getAuthentication().getName(); // 사용자 이메일
             commentDto.setPostId(postId);
             commentDto.setEmail(email); // 사용자 아이디 & 게시글 아이디 세팅

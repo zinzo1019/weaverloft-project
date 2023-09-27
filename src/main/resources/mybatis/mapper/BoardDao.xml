@@ -5,30 +5,33 @@
 
 <mapper namespace="com.example.choyoujin.DAO.BoardDao">
 
-<!--    게시판 리스트 가져오기-->
+    <!--    게시판 리스트 가져오기-->
     <select id="findBoardList" resultType="com.example.choyoujin.DTO.BoardDto">
-        select * from board
+        select *
+        from board
     </select>
 
-<!--    권한에 따라 게시판 리스트 가져오기-->
+    <!--    권한에 따라 게시판 리스트 가져오기-->
     <select id="findBoardListByRole" resultType="com.example.choyoujin.DTO.BoardDto">
-        select * from board
+        select *
+        from board
         where role = #{role}
     </select>
 
-<!--    아이디로 게시판 정보 가져오기-->
+    <!--    아이디로 게시판 정보 가져오기-->
     <select id="findById" resultType="com.example.choyoujin.DTO.BoardDto">
-        select * from board
+        select *
+        from board
         where id = #{id}
     </select>
 
-<!--    최상위 게시판 저장하기-->
+    <!--    최상위 게시판 저장하기-->
     <insert id="saveParentBoard">
         insert into board (name, tb_user_id, role, level)
         values (#{name}, #{user}, #{role}, 0)
     </insert>
 
-<!--    자식 게시판 저장하기-->
+    <!--    자식 게시판 저장하기-->
     <insert id="saveChildBoard">
         insert into board (name, tb_user_id, role, level, board_id)
         values (#{name}, #{user}, #{role}, #{level}, #{boardId})
@@ -46,7 +49,7 @@
                    bo.role,
                    1,
                    ARRAY[bo.id] as PATH,
-                   false as CYCLE
+                   false        as CYCLE
             FROM gps.yujin.board bo
             WHERE bo.board_id IS NULL
               AND bo.role = #{role}
@@ -60,12 +63,11 @@
                    bo.role,
                    B.level + 1,
                    ARRAY_APPEND(B.PATH, bo.id),
-                   bo.id = any(B.PATH)
+                   bo.id = any (B.PATH)
             FROM gps.yujin.board bo
-                     JOIN CODE_LIST B on bo.board_id  = B.ID
+                     JOIN CODE_LIST B on bo.board_id = B.ID
             WHERE bo.board_id = B.id
-              AND NOT CYCLE
-        )
+              AND NOT CYCLE)
         SELECT c.id,
                name,
                tb_user_id,
@@ -87,14 +89,78 @@
         <result property="level" column="level"/>
     </resultMap>
 
-<!--    게시판 아이디로 게시판 삭제하기-->
+    <!-- 게시판 게시글을 계층적으로 검색 -->
+    <select id="findAllPostsByBoardId" parameterType="Integer" resultMap="postResult">
+        WITH RECURSIVE CODE_LIST(id, name, board_id, cnt, role, level, PATH, CYCLE) as (
+            /* 계층구조의 시작조건 쿼리 */
+            SELECT bo.id,
+                   bo.name,
+--                    bo.tb_user_id,
+                   bo.board_id,
+                   bo.cnt,
+                   bo.role,
+                   1,
+                   ARRAY[bo.id] as PATH,
+                   false        as CYCLE
+            FROM gps.yujin.board bo
+            WHERE bo.board_id IS NULL
+              AND bo.id = #{boardId}
+            UNION ALL
+            /*하위 데이터를 찾아가기 위한 반복조건 쿼리*/
+            SELECT bo.id,
+                   bo.name,
+--                    bo.tb_user_id,
+                   bo.board_id,
+                   bo.cnt,
+                   bo.role,
+                   B.level + 1,
+                   ARRAY_APPEND(B.PATH, bo.id),
+                   bo.id = any (B.PATH)
+            FROM gps.yujin.board bo
+                     JOIN CODE_LIST B on bo.board_id = B.ID
+            WHERE bo.board_id = B.id
+              AND NOT CYCLE)
+        SELECT c.id,
+               c.name,
+--                c.tb_user_id,
+               c.board_id,
+               c.cnt,
+               c.role,
+               c.level,
+               p.id as post_id,
+               p.title,
+               p.tb_user_id,
+               p.create_date,
+               p.create_time
+        FROM CODE_LIST c
+                 left join gps.yujin.post p ON c.id = p.board_id
+        ORDER BY path
+    </select>
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="postResult" type="com.example.choyoujin.DTO.BoardDto">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="boardId" column="board_id"/>
+        <result property="cnt" column="cnt"/>
+        <result property="role" column="role"/>
+        <result property="level" column="level"/>
+
+        <result property="postId" column="post_id"/>
+        <result property="title" column="title"/>
+        <result property="createDate" column="create_date"/>
+        <result property="createTime" column="create_time"/>
+        <result property="postWriter" column="tb_user_id"/>
+    </resultMap>
+
+    <!--    게시판 아이디로 게시판 삭제하기-->
     <select id="deleteByBoardId">
         delete
         from board
         where id = #{boardId}
     </select>
 
-<!--    게시판 아이디로 게시판 삭제하기-->
+    <!--    게시판 아이디로 게시판 삭제하기-->
     <select id="deletePostsByBoardId">
         delete
         from post

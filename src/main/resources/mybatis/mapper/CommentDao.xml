@@ -16,7 +16,7 @@
                    c.comment_id,
                    1,
                    ARRAY[c.id] as PATH,
-                   false as CYCLE
+                   false       as CYCLE
             FROM gps.yujin.comment c
             WHERE c.comment_id IS NULL
               AND c.post_id = #{postId}
@@ -29,12 +29,11 @@
                    c.comment_id,
                    B.level + 1,
                    ARRAY_APPEND(B.PATH, c.id),
-                   c.id = any(B.PATH)
+                   c.id = any (B.PATH)
             FROM gps.yujin.comment c
-                     JOIN CODE_LIST B on c.comment_id  = B.ID
+                     JOIN CODE_LIST B on c.comment_id = B.ID
             WHERE c.comment_id = B.id
-              AND NOT CYCLE
-        )
+              AND NOT CYCLE)
         SELECT c.id,
                content,
                tb_user_id,
@@ -45,8 +44,8 @@
                u.name,
                i.pic_byte
         FROM CODE_LIST c
-        LEFT JOIN gps.yujin.tb_user u ON c.tb_user_id = u.email
-        LEFT JOIN gps.yujin.image i ON u.image_id = i.id
+                 LEFT JOIN gps.yujin.tb_user u ON c.tb_user_id = u.email
+                 LEFT JOIN gps.yujin.image i ON u.image_id = i.id
         ORDER BY path
     </select>
 
@@ -61,22 +60,25 @@
 
     <!-- 부모 댓글의 레벨 가져오기 -->
     <select id="getCommentLevel" resultType="int" parameterType="int">
-        SELECT level FROM comment WHERE id = #{id}
+        SELECT level
+        FROM comment
+        WHERE id = #{id}
     </select>
 
-<!--    댓글 번호로 댓글 정보 가져오기-->
+    <!--    댓글 번호로 댓글 정보 가져오기-->
     <select id="findById" resultType="com.example.choyoujin.DTO.CommentDto">
-        select * from comment
+        select *
+        from comment
         where id = #{id}
     </select>
 
-<!--    댓글 저장하기-->
+    <!--    댓글 저장하기-->
     <insert id="saveComment" parameterType="com.example.choyoujin.DTO.CommentDto">
         insert into comment (content, tb_user_id, post_id, level)
         values (#{content}, #{email}, #{postId}, 0)
     </insert>
 
-<!--    대댓글 저장하기-->
+    <!--    대댓글 저장하기-->
     <insert id="saveReply" parameterType="com.example.choyoujin.DTO.CommentDto">
         insert into comment (content, tb_user_id, comment_id, level)
         values (#{content}, #{email}, #{commentId}, #{level})
@@ -84,7 +86,8 @@
 
     <!-- 대댓글 조회 -->
     <select id="selectReplies" parameterType="int" resultType="com.example.choyoujin.DTO.CommentDto">
-        SELECT * FROM comment
+        SELECT *
+        FROM comment
         WHERE post_id = #{postId}
         ORDER BY level ASC, id ASC;
     </select>

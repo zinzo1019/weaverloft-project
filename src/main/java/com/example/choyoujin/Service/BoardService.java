@@ -2,9 +2,11 @@ package com.example.choyoujin.Service;
 
 import com.example.choyoujin.DAO.BoardDao;
 import com.example.choyoujin.DTO.BoardDto;
-import com.example.choyoujin.DTO.PageRequest;
 import com.example.choyoujin.DTO.PostDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -85,5 +87,18 @@ public class BoardService {
     public void deleteByBoardId(Integer boardId) {
         boardDao.deletePostsByBoardId(boardId); // 게시판 내부 게시글들 삭제하기
         boardDao.deleteByBoardId(boardId); // 게시판 삭제하기
+    }
+
+    /** 페이징 처리 후 */
+    public Page<BoardDto> findAllPostsByBoardId(int boardId, int page, int size) {
+        int start = (page - 1) * size;
+        List<BoardDto> boardDtos = boardDao.findAllPostsByBoardId(boardId);
+        int total = boardDtos.size();
+        return new PageImpl<>(boardDtos, PageRequest.of(page -1, size), total);
+    }
+
+    /** 페이징 처리 전 */
+    public List<BoardDto> findAllPostsByBoardId(int boardId) {
+        return boardDao.findAllPostsByBoardId(boardId);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.choyoujin.DAO;
 
 import com.example.choyoujin.DTO.BoardDto;
+import com.example.choyoujin.DTO.PostDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface BoardDao {
     void deleteByBoardId(Integer boardId);
 
     void deletePostsByBoardId(Integer boardId);
+
+    List<BoardDto> findAllPostsByBoardId(int boardId);
+
+    int countByBoardIdWithCycle(int boardId);
 }
