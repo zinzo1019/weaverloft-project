@@ -15,8 +15,7 @@ public class SessionExpirationScheduler {
     private UserService userService;
 
     /** 60일 간격 휴면 처리 */
-//    @Scheduled(fixedRate = 60000) // 1분마다 실행
-    @Scheduled(cron = "0 0 0 */60 * ?") // 매일 자정에 실행되도록 설정 (60일마다)
+    @Scheduled(fixedRate = 60000) // 1분마다 실행
     public void processDormantAccounts() {
         Date currentDate = new Date();
         System.out.println("1분마다 실행됩니다. 현재 날짜: " + currentDate);
