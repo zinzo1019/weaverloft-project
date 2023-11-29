@@ -41,7 +41,9 @@ public class FindController {
             // 같은 전화번호를 가진 사용자의 데이터 가져오기
             UserDto userDto = userService.findUserByPhone(phone);
             if (userDto.getName().equals(name)) { // 이름이 일치한다면
-                return ResponseEntity.ok(new ApiResponse("이메일: " + userDto.getEmail()));
+                String email = userDto.getEmail();
+
+                return ResponseEntity.ok(new ApiResponse("이메일: " + email));
             } else { // 이름이 일치하지 않는다면
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("이름 또는 핸드폰 번호가 맞지 않습니다. 다시 확인해주세요."));
             }

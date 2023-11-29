@@ -102,6 +102,7 @@ public class PostController {
         postService.saveFilesByPostId(postDto, postId); // 파일 리스트 저장하기
         return ResponseEntity.ok(postId); // 게시글 아이디로 응답
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("게시글 저장에 실패했습니다.");
         }
     }

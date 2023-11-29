@@ -7,11 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <title>메인 페이지</title>
-
-    <style>
-
-    </style>
 </head>
+
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
 
 <body>
 <section class="vh-100">

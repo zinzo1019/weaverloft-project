@@ -19,6 +19,14 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
+
 <script>
     var isDuplicated = null; // 이메일 중복 여부
     var verifyCheck = false; // 메일 인증 여부
@@ -283,7 +291,7 @@
 </script>
 
 <body>
-<section class="vh-100" style="background-color: #eee;">
+<section class="vh-100">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-12 col-xl-11">
@@ -300,6 +308,7 @@
 
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+
 
 <%--                                        이메일--%>
                                         <div class="form-outline flex-fill mb-0">

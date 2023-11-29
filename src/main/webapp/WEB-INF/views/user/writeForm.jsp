@@ -35,9 +35,15 @@
         margin: 5px; /* 이미지 간 간격 설정 */
     }
 </style>
-<script>
 
-</script>
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
+
 <body>
 
 <article>
@@ -71,34 +77,34 @@
                           placeholder="내용을 입력해 주세요"></textarea>
             </div>
 
-            <div class="mb-3" name="accessLevel">
-                <fieldset>
-                    <legend>공개범위</legend>
-                    <c:choose>
-                        <c:when test="${role == 'ROLE_GUEST'}">
-                            <!-- ROLE_GUEST인 경우에는 "전체 공개"만 표시 -->
-                            <input type="checkbox" id="guest" name="accessLevel" value="guest">
-                            <label for="guest">전체 공개</label><br>
-                        </c:when>
-                        <c:when test="${role == 'ROLE_USER'}">
-                            <!-- ROLE_USER인 경우에는 "전체 공개"와 "사용자 공개" 표시 -->
-                            <input type="checkbox" id="guest" name="accessLevel" value="guest">
-                            <label for="guest">전체 공개</label><br>
-                            <input type="checkbox" id="user" name="accessLevel" value="user">
-                            <label for="user">사용자 공개</label><br>
-                        </c:when>
-                        <c:when test="${role == 'ROLE_ADMIN'}">
-                            <!-- ROLE_ADMIN인 경우에는 "전체 공개", "사용자 공개", "관리자 공개" 모두 표시 -->
-                            <input type="checkbox" id="guest" name="accessLevel" value="guest">
-                            <label for="guest">전체 공개</label><br>
-                            <input type="checkbox" id="user" name="accessLevel" value="user">
-                            <label for="user">사용자 공개</label><br>
-                            <input type="checkbox" id="admin" name="accessLevel" value="admin">
-                            <label for="admin">관리자 공개</label><br>
-                        </c:when>
-                    </c:choose>
-                </fieldset>
-            </div>
+<%--            <div class="mb-3" name="accessLevel">--%>
+<%--                <fieldset>--%>
+<%--                    <legend>공개범위</legend>--%>
+<%--                    <c:choose>--%>
+<%--                        <c:when test="${role == 'ROLE_GUEST'}">--%>
+<%--                            <!-- ROLE_GUEST인 경우에는 "전체 공개"만 표시 -->--%>
+<%--                            <input type="checkbox" id="guest" name="accessLevel" value="guest">--%>
+<%--                            <label for="guest">전체 공개</label><br>--%>
+<%--                        </c:when>--%>
+<%--                        <c:when test="${role == 'ROLE_USER'}">--%>
+<%--                            <!-- ROLE_USER인 경우에는 "전체 공개"와 "사용자 공개" 표시 -->--%>
+<%--                            <input type="checkbox" id="guest" name="accessLevel" value="guest">--%>
+<%--                            <label for="guest">전체 공개</label><br>--%>
+<%--                            <input type="checkbox" id="user" name="accessLevel" value="user">--%>
+<%--                            <label for="user">사용자 공개</label><br>--%>
+<%--                        </c:when>--%>
+<%--                        <c:when test="${role == 'ROLE_ADMIN'}">--%>
+<%--                            <!-- ROLE_ADMIN인 경우에는 "전체 공개", "사용자 공개", "관리자 공개" 모두 표시 -->--%>
+<%--                            <input type="checkbox" id="guest" name="accessLevel" value="guest">--%>
+<%--                            <label for="guest">전체 공개</label><br>--%>
+<%--                            <input type="checkbox" id="user" name="accessLevel" value="user">--%>
+<%--                            <label for="user">사용자 공개</label><br>--%>
+<%--                            <input type="checkbox" id="admin" name="accessLevel" value="admin">--%>
+<%--                            <label for="admin">관리자 공개</label><br>--%>
+<%--                        </c:when>--%>
+<%--                    </c:choose>--%>
+<%--                </fieldset>--%>
+<%--            </div>--%>
             <button type="button" class="btn btn-sm btn-primary" id="save">저장</button>
             &nbsp;&nbsp; <a href="/" class="btn btn-secondary"> 목록 보기 </a>
         </form>

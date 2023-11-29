@@ -63,13 +63,6 @@ public class UserController {
         }
     }
 
-    /** 사용자 리스트 페이지 */
-//    @RequestMapping(value = "/user", method = RequestMethod.GET)
-//    public String userListPage(Model model) {
-//        model.addAttribute("users", userDao.list());
-//        return "admin/userlist";
-//    }
-
     /** 게시판 관리 페이지 */
     @GetMapping(value = "/ROLE_ADMIN/board")
     public String manageBoardPage(Model model) {

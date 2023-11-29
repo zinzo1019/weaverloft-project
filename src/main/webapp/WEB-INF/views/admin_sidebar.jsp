@@ -36,7 +36,7 @@
 </nav>
 <!-- 메인 컨텐츠 -->
 <div id="content">
-    <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+<%--    <button type="button" id="sidebarCollapse" class="btn btn-secondary">--%>
         <i class="bi bi-list"></i>
     </button>
 </div>

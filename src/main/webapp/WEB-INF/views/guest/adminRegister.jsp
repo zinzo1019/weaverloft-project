@@ -40,6 +40,14 @@
 
 </style>
 
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
+
 <script>
 
     var isDuplicated = null; // 이메일 중복 여부
@@ -316,7 +324,7 @@
 </script>
 
 <body>
-<section class="vh-100" style="background-color: #eee;">
+<section class="vh-100">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-12 col-xl-11">

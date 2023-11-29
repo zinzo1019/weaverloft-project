@@ -22,7 +22,7 @@ public interface PostDao {
 
     List<PostDto> findAllByRole(String role, int page, int size);
 
-    int writeDao(PostDto postDto); // ㄱ게시글 저장하기
+    int writeDao(PostDto postDto); // 게시글 저장하기
 
     void saveImages(ImageDto imageDto);
 

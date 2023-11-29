@@ -16,6 +16,11 @@
 </head>
 
 <style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
 </style>
 
 <script>
@@ -34,74 +39,79 @@
         <main class="" role="main">
 
             <!-- 사이드 바를 포함 -->
-            <jsp:include page="../main_sidebar.jsp" />
-<%--            헤더--%>
+            <jsp:include page="../main_sidebar.jsp"/>
+            <%--            헤더--%>
             <!-- 오른쪽 컨텐츠에 왼쪽 마진을 주어 겹치지 않게 설정 -->
             <div id="content" style="margin-left: 300px;">
-            <%@ include file="../header.jsp" %>
+                <%@ include file="../header.jsp" %>
 
-        <div id="searchResults">
-            <%
-                BoardDto board = (BoardDto) request.getAttribute("board");
-                if (board.getName() == null || board.getName().isEmpty()) { // 게시판 선택 전
-                    board.setName("최근 게시글");
-                    board.setRole("ROLE_GUEST"); // 게스트 권한
-                }
-            %>
+                <div id="searchResults">
+                    <%
+                        BoardDto board = (BoardDto) request.getAttribute("board");
+                        if (board.getName() == null || board.getName().isEmpty()) { // 게시판 선택 전
+                            board.setName("최근 게시글");
+                            board.setRole("ROLE_GUEST"); // 게스트 권한
+                        }
+                    %>
 
-            <h1 class="mt-4"><%= board.getName() %></h1>
-            <div class="card mb-4">
-                <div class="card-header">
-                </div>
-                <div class="card-body">
-                    <table class="table table-hover table-striped">
-                        <thead>
-                        <tr>
-                            <th>글번호</th>
-                            <th>작성자</th>
-                            <th>제목</th>
-                            <th>날짜</th>
-                            <th>수정</th>
-                            <th>삭제</th>
-                        </tr>
-                        <c:forEach items="${list.content}" var="dto">
-                        <tr>
-                            <td>${dto.id}</td>
-                            <td>${dto.userName}</td>
-                            <td><a href="/${board.role}/view?id=${dto.id}"> ${dto.title} </a></td>
-                            <td> ${dto.createDate}</td>
-                                <%--                                작성자와 로그인 한 사람의 id가 같다면 수정 & 삭제 버튼 활성화--%>
-                            <c:if test="${dto.email eq user.email}">
-                                <td><a href="/${board.role}/update/view?id=${dto.id}">수정</a></td>
-                            </c:if>
-                            <c:if test="${dto.email eq user.email}">
-                                <td><a href="/${board.role}/delete?boardId=${id}&id=${dto.id}">삭제</a></td>
-                            </c:if>
-                        </tr>
+                    <h1 class="mt-4"><%= board.getName() %>
+                    </h1>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>글번호</th>
+                                    <th>작성자</th>
+                                    <th>제목</th>
+                                    <th>날짜</th>
+                                    <th>수정</th>
+                                    <th>삭제</th>
+                                </tr>
+                                <c:forEach items="${list.content}" var="dto">
+                                <tr>
+                                    <td>${dto.id}</td>
+                                    <td>${dto.userName}</td>
+                                    <td><a href="/${board.role}/view?id=${dto.id}"> ${dto.title} </a></td>
+                                    <td> ${dto.createDate}</td>
+                                        <%--                                작성자와 로그인 한 사람의 id가 같다면 수정 & 삭제 버튼 활성화--%>
+                                    <td>
+                                        <c:if test="${dto.email eq user.email}">
+                                            <a href="/${board.role}/update/view?id=${dto.id}">수정</a>
+                                        </c:if>
+                                    </td>
+                                    <td>
+                                        <c:if test="${dto.email eq user.email}">
+                                    <a href="/${board.role}/delete?boardId=${id}&id=${dto.id}">삭제</a>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                                </c:forEach>
+                            </table>
+                            <c:choose>
+                                <%--                            최근 게시글 페이지에서는 글 작성이 불가--%>
+                                <c:when test="${board.name eq '최근 게시글'}"></c:when>
+                                <c:otherwise>
+                                    <p><a href="/${board.role}/writeForm?id=${id}">글작성</a></p>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+
+                    </div>
+                    <!-- 페이징 처리 -->
+                    <ul class="pagination justify-content-center">
+                        <c:forEach begin="1" end="${pagination.endPage}" varStatus="status">
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="/${board.role}?id=${board.id}&page=${status.index}">${status.index}</a>
+                            </li>
                         </c:forEach>
-                    </table>
-                    <c:choose>
-                        <%--                            최근 게시글 페이지에서는 글 작성이 불가--%>
-                        <c:when test="${board.name eq '최근 게시글'}"></c:when>
-                        <c:otherwise>
-                            <p><a href="/${board.role}/writeForm?id=${id}">글작성</a></p>
-                        </c:otherwise>
-                    </c:choose>
+                    </ul>
                 </div>
 
             </div>
-            <!-- 페이징 처리 -->
-            <ul class="pagination justify-content-center">
-                <c:forEach begin="1" end="${pagination.endPage}" varStatus="status">
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="/${board.role}?id=${board.id}&page=${status.index}">${status.index}</a>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-
-    </div>
 
         </main>
     </div>

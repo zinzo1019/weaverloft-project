@@ -38,13 +38,21 @@
         font-size: 90%;
     }
 </style>
+
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
 <body>
 <div class="container-fluid">
     <div class="row flex-nowrap">
         <div class="col-3 bd-sidebar">
 <%--            게시판 리스트--%>
             <ul class="nav">
-                <li>일반 게시판fff</li>
+                <li>일반 게시판</li>
                 <c:forEach items="${guestBoards}" var="board">
                     <li><a href="/${board.role}/board?id=${board.id}" >${board.name} </a></li>
                 </c:forEach>
@@ -58,8 +66,6 @@
                 <c:forEach items="${adminBoards}" var="board">
                     <li><a href="/${board.role}/board?id=${board.id}" >${board.name} </a></li>
                 </c:forEach>
-
-
             </ul>
             <br>
         </div>

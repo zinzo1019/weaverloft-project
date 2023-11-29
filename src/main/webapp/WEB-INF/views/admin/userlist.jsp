@@ -10,8 +10,15 @@
     <title>게시글 개인 뷰 페이지</title>
 </head>
 
-<body>
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
 
+<body>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Board</h1>
     <div class="card mb-4">

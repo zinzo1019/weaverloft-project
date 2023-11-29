@@ -21,14 +21,14 @@
 </head>
 
 <style>
-
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
 </style>
 
-<script>
-
-</script>
 <body>
-
 <!-- 사이드 바를 포함 -->
 <jsp:include page="../admin_sidebar.jsp" />
 
@@ -139,6 +139,5 @@
             console.error('데이터를 불러오는 중 오류가 발생했습니다.');
         }
     });
-
 </script>
 </html>

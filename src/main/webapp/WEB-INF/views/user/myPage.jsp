@@ -20,10 +20,13 @@
 </head>
 
 <style>
+    #body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+        padding-top: 10%;
+    }
 </style>
-
-<script>
-</script>
 
 <!DOCTYPE html>
 <html>
@@ -34,15 +37,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
-<body>
 
+<body id="body">
 <section class="vh-100">
     <div class="container-fluid h-custom">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-md-9 col-lg-6 col-xl-5">
+            <div class="col-md-9 col-lg-6 col-xl-5" style="width: 300px;">
                 <img src="data:${userDto.type};base64,${encoding}" class="img-fluid" alt="사용자 이미지">
             </div>
-            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1" style="padding: 0;">
 
                 <form id="form" enctype="multipart/form-data">
 

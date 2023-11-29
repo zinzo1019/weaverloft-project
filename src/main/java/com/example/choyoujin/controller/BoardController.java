@@ -57,5 +57,4 @@ public class BoardController {
         else // 게시글이 없다면
             return ResponseEntity.ok("");
     }
-
 }

@@ -44,10 +44,8 @@ public class FileService {
             String name = file.getOriginalFilename(); // 파일 이름
             String type = file.getContentType(); // 파일 타입
             byte[] picByte = compressBytes(file.getBytes()); // 문자열 압축
-
             ImageDto imageDto = new ImageDto(name, type, picByte); // ImageDto 생성
             fileDao.saveImage(imageDto); // 이미지 저장
-
             return imageDto.getId(); // 이미지를 저장하고 기본키가 리턴됨
         } catch (Exception e) {
             e.printStackTrace();

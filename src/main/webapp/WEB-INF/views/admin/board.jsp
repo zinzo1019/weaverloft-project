@@ -77,8 +77,14 @@
 
 </style>
 
-<script>
-</script>
+<style>
+    body {
+        width: 100%;
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
+
 <body>
 
 <!-- 사이드 바를 포함 -->
@@ -97,7 +103,7 @@
             <%--            일반 게시판 - 부모--%>
             <form class="boardForm" style="display: none;"><br>
                 <input type="text" class="boardText" placeholder="게시판 이름">
-                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_GUEST">전송</button>
+                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_GUEST">저장</button>
             </form>
 
             <%--            일반 게시판 자식--%>
@@ -116,7 +122,7 @@
                 <%--                일반 게시판 자식 생성--%>
                 <form class="boardForm" style="display: none; margin-left: 10px;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    <button class="boardButton" data-board-id="${board.id}">전송
+                    <button class="boardButton" data-board-id="${board.id}">저장
                     </button>
                 </form>
                 <div style="height: 10px;"></div>
@@ -130,7 +136,7 @@
             <%--            사용자 게시판 부모--%>
             <form class="boardForm" style="display: none;"><br>
                 <input type="text" class="boardText" placeholder="게시판 이름">
-                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_USER">전송</button>
+                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_USER">저장</button>
             </form>
             <div style="height: 10px;"></div>
 
@@ -149,7 +155,7 @@
                 <%--                게시판 폼--%>
                 <form class="boardForm" style="display: none; margin-left: 10px;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    <button class="boardButton" data-board-id="${board.id}">전송</button>
+                    <button class="boardButton" data-board-id="${board.id}">저장</button>
                 </form>
                 <div style="height: 10px;"></div>
             </c:forEach><br><br>
@@ -163,7 +169,7 @@
             <%--                관리자 게시판 부모--%>
             <form class="boardForm" style="display: none;"><br>
                 <input type="text" class="boardText" placeholder="게시판 이름">
-                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_ADMIN">전송</button>
+                <button class="boardButton" data-board-id="${board.id}" data-board-role="ROLE_ADMIN">저장</button>
             </form>
             <div style="height: 10px;"></div>
 
@@ -182,7 +188,7 @@
                 <%--                관리자 게시판 자식 생성--%>
                 <form class="boardForm" style="display: none;"><br>
                     <input type="text" class="boardText" placeholder="게시판 이름">
-                    <button class="boardButton" data-board-id="${board.id}">전송
+                    <button class="boardButton" data-board-id="${board.id}">저장
                     </button>
                 </form>
                 <div style="height: 10px;"></div>
@@ -202,7 +208,7 @@
 <script>
     var showBoardForms = document.querySelectorAll('.showBoardForm'); // 게시판 추가 버튼
     var boardForms = document.querySelectorAll('.boardForm'); // 게시글 작성 폼
-    var boardButtons = document.querySelectorAll('.boardButton'); // 게시판 추가 전송 버튼
+    var boardButtons = document.querySelectorAll('.boardButton'); // 게시판 추가 저장 버튼
     var boardTexts = document.querySelectorAll('.boardText'); // 게시판 제목
     var deleteBoards = document.querySelectorAll('.deleteBoard'); // 게시판 삭제
 

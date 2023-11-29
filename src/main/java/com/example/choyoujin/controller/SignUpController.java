@@ -35,6 +35,12 @@ public class SignUpController {
         return "guest/register";
     }
 
+    /** user 회원가입 페이지 */
+    @RequestMapping("/sign_up")
+    public String sign_up() {
+        return "guest/sign_up";
+    }
+
     /** user 회원가입 로직 */
     @RequestMapping("/register-process")
     public String registerProcess(UserDto userDto) {
