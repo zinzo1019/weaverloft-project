@@ -18,6 +18,7 @@
         width: 100%;
         max-width: 2000px;
         margin: 0 auto;
+        padding-top: 10%;
     }
 </style>
 

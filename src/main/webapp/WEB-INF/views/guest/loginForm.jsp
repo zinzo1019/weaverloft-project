@@ -14,13 +14,14 @@
         width: 100%;
         max-width: 2000px;
         margin: 0 auto;
+        padding-top: 10%;
     }
 </style>
 
 <body>
 <section class="vh-100">
     <div class="container-fluid h-custom">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="row d-flex justify-content-center h-100">
             <div class="col-md-9 col-lg-6 col-xl-5">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
                      class="img-fluid" alt="Sample image">
